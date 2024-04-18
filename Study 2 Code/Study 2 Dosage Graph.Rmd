@@ -9,30 +9,36 @@ date: "2024-04-10"
 
 ```{r setup, include=FALSE}
 
-install.packages("effsize")
 library(effsize)
-
-install.packages("ggplot2")
 library(ggplot2)
-
-install.packages("ggsignif")
 library(ggsignif)
-
-install.packages("knitr")
 library(knitr)
-
-install.packages("dplyr")
 library(dplyr)
-
-install.packages("patchwork")
 library(patchwork)
+library(here)
 
 ```
 
 ```{r setup}
-setwd("/Users/beheo/Desktop/Gratitude Interventions Study/Study 2")
-data <- read.csv("Gratitude_Interventions_Study_2.csv", header = TRUE)
-data <- data[data$Finished == 1, ]
+# Dangs API credential at UCSD
+qualtrics_api_credentials(
+  api_key = 'urh7PtWEEOkAzrbjmYQC2FoipCvCT4n8ZIByL5rH', 
+  base_url = 'iad1.qualtrics.com',
+  install = TRUE,
+  overwrite = TRUE)
+
+readRenviron("~/.Renviron")
+
+# open data
+DF <- fetch_survey(surveyID = 'SV_0rIOXQcp62uVzsq',
+                   force_request = T,
+                   label = F,
+                   convert = F)
+
+# process data
+data <- DF %>%
+  # remove incomplete or test observations
+  filter(Finished != "0", condition !="NA")
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
@@ -90,7 +96,7 @@ print(cond.means_1)
 cond.means_1 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(gratitude_all)) %>%
-  mutate(Mean = Mean - 4.5)
+  mutate(Mean = Mean - 4.502193)
 
 ```
 ```{r happy}
@@ -101,7 +107,7 @@ print(happy_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(happy_all)) %>%
-  mutate(Mean = Mean - 4.0)
+  mutate(Mean = Mean - 3.996053)
 
 # Calculate standard error for 'happy_all' by 'condition'
 std_errors <- data %>%
@@ -151,7 +157,7 @@ print(optimistic_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(optimistic_all)) %>%
-  mutate(Mean = Mean - 4.27)
+  mutate(Mean = Mean - 4.266447)
 
 # Calculate standard error for 'optimistic_all' by 'condition'
 std_errors <- data %>%
@@ -198,7 +204,7 @@ print(sad_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(sad_all)) %>%
-  mutate(Mean = Mean - 2.79)
+  mutate(Mean = Mean - 2.740132)
 
 # Calculate standard error for 'sad_all' by 'condition'
 std_errors <- data %>%
@@ -246,7 +252,7 @@ print(indebted_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(indebted_all)) %>%
-  mutate(Mean = Mean - 3.04)
+  mutate(Mean = Mean - 3.036184)
 
 # Calculate standard error for 'indebted_all' by 'condition'
 std_errors <- data %>%
@@ -293,7 +299,7 @@ print(guilty_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(guilty)) %>%
-  mutate(Mean = Mean - 1.99)
+  mutate(Mean = Mean - 1.993421)
 
 # Calculate standard error for 'guilty' by 'condition'
 std_errors <- data %>%
@@ -340,7 +346,7 @@ print(envy_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(envy_all)) %>%
-  mutate(Mean = Mean - 2.01)
+  mutate(Mean = Mean - 2.010965)
 
 # Calculate standard error for 'envy_all' by 'condition'
 std_errors <- data %>%
@@ -388,7 +394,7 @@ print(ls_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(ls_total)) %>%
-  mutate(Mean = Mean - 3.83)
+  mutate(Mean = Mean - 3.825000)
 
 # Calculate standard error for 'ls_total' by 'condition'
 std_errors <- data %>%
@@ -435,7 +441,7 @@ print(sc_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(sc_total)) %>%
-  mutate(Mean = Mean - 3.87)
+  mutate(Mean = Mean - 3.866228)
 
 # Calculate standard error for 'sc_total' by 'condition'
 std_errors <- data %>%
@@ -482,7 +488,7 @@ print(self_image_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(self_image_total)) %>%
-  mutate(Mean = Mean - 3.355)
+  mutate(Mean = Mean - 3.657895)
 
 # Calculate standard error for 'self_image_total' by 'condition'
 std_errors <- data %>%
@@ -529,7 +535,7 @@ print(ladder_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(ladder)) %>%
-  mutate(Mean = Mean - 5.78)
+  mutate(Mean = Mean - 5.782895)
 
 # Calculate standard error for 'ladder' by 'condition'
 std_errors <- data %>%

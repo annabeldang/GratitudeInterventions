@@ -10,23 +10,18 @@ date: "2024-04-10"
 #Libraries
 ```{r packages}
 
-install.packages("effsize")
 library(effsize)
-
-install.packages("compute.es")
 library(compute.es)
-
-install.packages("ggplot2")
 library(ggplot2)
-
-install.packages("ggsignif")
 library(ggsignif)
-
-install.packages("knitr")
 library(knitr)
-
-install.packages("kableExtra")
 library(kableExtra)
+library(here)
+library(tidyverse)
+library(qualtRics)
+
+# specify directory structure
+i_am("code/Study 2 Pairwise Analysis.Rmd")
 
 ```
 
@@ -34,9 +29,25 @@ library(kableExtra)
 
 ```{r setup}
 
-setwd("/Users/beheo/Desktop/Gratitude Interventions Study/Study 2")
-data <- read.csv("Gratitude_Interventions_Study_2.csv", header = TRUE)
-data <- data[data$Finished == 1, ]
+# Dangs API credential at UCSD
+qualtrics_api_credentials(
+  api_key = 'urh7PtWEEOkAzrbjmYQC2FoipCvCT4n8ZIByL5rH', 
+  base_url = 'iad1.qualtrics.com',
+  install = TRUE,
+  overwrite = TRUE)
+
+readRenviron("~/.Renviron")
+
+# open data
+DF <- fetch_survey(surveyID = 'SV_0rIOXQcp62uVzsq',
+                   force_request = T,
+                   label = F,
+                   convert = F)
+
+# process data
+data <- DF %>%
+  # remove incomplete or test observations
+  filter(Finished != "0")
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
