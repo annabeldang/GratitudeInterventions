@@ -1,0 +1,645 @@
+---
+title: "Gratitude Interventions Study 2 Pairwise Graphs"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+date: "2024-04-10"
+---
+
+```{r libraries}
+
+install.packages("ggplot2")
+library(ggplot2)
+
+install.packages("dplyr")
+library(dplyr)
+
+install.packages("patchwork")
+library(patchwork)
+
+install.packages("scales")
+library(scales)
+```
+#Categories
+
+```{r setup}
+
+setwd("/Users/beheo/Desktop/Gratitude Interventions Study/Study 2")
+#here package - newer gratitude work
+data <- read.csv("Gratitude_Interventions_Study_2.csv", header = TRUE)
+data <- data[data$Finished == 1, ]
+#filter function
+
+data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
+data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
+data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
+data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious", "nervous")], na.rm = TRUE)
+data$indebted_all <- rowMeans(data[, c("indebted", "obligated")], na.rm = TRUE)
+data$envy_all <- rowMeans(data[, c("envious", "bitter", "jealous")], na.rm = TRUE)
+
+data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
+#need to fix (reverse coding)
+data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
+data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+
+```
+
+
+```{r categories}
+#Conditions
+conditions <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")
+
+control_conditions <- subset(data, condition_type == 1)
+gratitude_conditions <- subset(data, condition_type == 2)
+
+control <- subset(data, condition == 1)
+control_events <- subset(data, condition == 2)
+control_interesting <- subset(data, condition == 3)
+control_hassles <- subset(data, condition == 4)
+
+grat_list <- subset(data, condition == 5)
+grat_letter <- subset(data, condition == 6)
+grat_text <- subset(data, condition == 7)
+grat_hk <- subset(data, condition == 8)
+grat_sing <- subset(data, condition == 9)
+grat_god_list <- subset(data, condition == 10)
+grat_god_letter <- subset(data, condition == 11)
+
+```
+
+#Gratitude
+```{r gratitude data}
+control_1_ef <- effsize::cohen.d(control$gratitude_all, grat_list$gratitude_all, hedges.correction = TRUE)
+control_2_ef <- effsize::cohen.d(control$gratitude_all, grat_letter$gratitude_all, hedges.correction = TRUE)
+control_3_ef <- effsize::cohen.d(control$gratitude_all, grat_text$gratitude_all, hedges.correction = TRUE)
+control_4_ef <- effsize::cohen.d(control$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+control_5_ef <- effsize::cohen.d(control$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+control_6_ef <- effsize::cohen.d(control$gratitude_all, grat_god_list$gratitude_all, hedges.correction = TRUE)
+control_7_ef <- effsize::cohen.d(control$gratitude_all, grat_god_list$gratitude_all, hedges.correction = TRUE)
+  
+con_1_ef <- effsize::cohen.d(control$gratitude_all, control_events$gratitude_all, hedges.correction = TRUE)
+con_2_ef <- effsize::cohen.d(control$gratitude_all, control_interesting$gratitude_all, hedges.correction = TRUE)
+con_3_ef <- effsize::cohen.d(control$gratitude_all, control_hassles$gratitude_all, hedges.correction = TRUE)
+```
+
+```{r gratitude groups}
+
+# Calculate standard error of the mean for each condition
+gratitude_se <- tapply(data$gratitude_all, data$condition, function(x) sd(x) / sqrt(length(x)))
+
+# Calculate average gratitude by condition
+gratitude_mean <- tapply(data$gratitude_all, data$condition, mean) - 4.502193
+
+# Dataframe
+gratitude_data <- data.frame(
+  condition = conditions,
+  gratitude_mean = gratitude_mean,
+  gratitude_se = gratitude_se,
+  gratitude_ef = -(c(0, con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate, control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate,control_6_ef$estimate,control_7_ef$estimate)))
+
+# Assign ordered condition titles, colors, and names
+gratitude_data <- gratitude_data %>%
+  mutate(condition_color = case_when(
+    condition == "1" ~ "indianred",
+    condition == "2" ~ "lightsalmon",
+    condition == "3" ~ "lightgoldenrod",
+    condition == "4" ~ "palegreen2",
+    condition == "5" ~ "deepskyblue2",
+    condition == "6" ~ "orchid",
+    condition == "7" ~ "tan",
+    condition == "8" ~ "lightblue",
+    condition == "9" ~ "lightpink",
+    condition == "10" ~ "gray",
+    condition == "11" ~ "aquamarine",
+    TRUE ~ "Other"))
+ 
+gratitude_data <- gratitude_data %>%
+  mutate(condition_name = case_when(
+    condition == "1" ~ "Measurement Only",
+    condition == "2" ~ "Events List",
+    condition == "3" ~ "Interesting Events List",
+    condition == "4" ~ "Hassles List",
+    condition == "5" ~ "Gratitude List",
+    condition == "6" ~ "Gratitude Letter",
+    condition == "7" ~ "Gratitude Text",
+    condition == "8" ~ "Chan Gratitude List",
+    condition == "9" ~ "Mental Subtraction Task",
+    condition == "10" ~ "Gratitude to God List",
+    condition == "11" ~ "Gratitude to God Letter",
+    TRUE ~ "Other"))
+
+# Reorder the factor levels of ordered_condition_name based on ascending mean values
+gratitude_data$ordered_condition_name <- factor(gratitude_data$condition_name, levels = gratitude_data$condition_name[order(gratitude_data$gratitude_mean)])
+gratitude_data$ordered_condition_color <- factor(gratitude_data$condition_color, levels = unique(gratitude_data$condition_color))
+
+# Calculate range of y-axis values for bars
+gratitude_y_range <- range(gratitude_data$gratitude_mean)
+
+# Calculate range of effect sizes
+gratitude_effect_size_range <- range(gratitude_data$gratitude_ef)
+
+# Scale effect sizes to match y-axis range
+gratitude_scaled_effect_sizes <- rescale(gratitude_data$gratitude_ef, to = gratitude_y_range)
+```
+```{r gratitude graph}
+
+# Plot the graph
+gratitude_graph <- ggplot(gratitude_data, aes(x = ordered_condition_name, y = gratitude_mean, fill = ordered_condition_color)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = gratitude_mean - gratitude_se, 
+                    ymax = gratitude_mean + gratitude_se),
+                width = 0.2, position = position_dodge(0.9)) + 
+  labs(x = "Conditions",
+       y = "Mean Self-Reported Gratitude",
+       title = "Mean Gratitude across Conditions") +
+  ylim(-0.5, 2.5) + 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),  
+        axis.ticks.y = element_line(color = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_blank()) +
+  scale_fill_manual(values = unique(gratitude_data$condition_color),
+                    labels = unique(gratitude_data$ordered_condition_name)) +
+  guides(fill = guide_legend(title = "Condition")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1),
+                     sec.axis = sec_axis(~ rescale(., from = gratitude_y_range, to = gratitude_effect_size_range), name = "Effect Size", labels = scales::number_format(accuracy = 0.1))) +
+  
+  geom_segment(aes(x = 0.5, xend = 1.45, y = 1.8, yend = 1.8), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 1.45, xend = 1.45, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 1.45, xend = 1.55, y = 1.75, yend = 1.75), color = "black", size = 0.5) +
+  geom_text(aes(x = 1.5, y = 1.82), label = "*", color = "red", size = 5) +
+  geom_segment(aes(x = 1.55, xend = 11.5, y = 1.8, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 1.55, xend = 1.55, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
+  
+  geom_segment(aes(x = 0.5, xend = 2.5, y = 2.0, yend = 2.0), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
+  geom_segment(aes(x = 2.5, xend = 2.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
+  geom_segment(aes(x = 2.5, xend = 4.5, y = 1.95, yend = 1.95), color = "black", size = 0.5) +
+  geom_text(aes(x = 3.5, y = 1.98), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 4.5, xend = 11.5, y = 2.0, yend = 2.0), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 4.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
+  
+  geom_segment(aes(x = 0.5, xend = 4.5, y = 2.2, yend = 2.2), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 4.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 5.5, y = 2.15, yend = 2.15), color = "black", size = 0.5) + 
+  geom_text(aes(x = 5, y = 2.18), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 5.5, xend = 11.5, y = 2.2, yend = 2.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 5.5, xend = 5.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
+
+  geom_segment(aes(x = 0.5, xend = 5.5, y = 2.4, yend = 2.4), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 5.5, xend = 5.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 5.5, xend = 6.5, y = 2.35, yend = 2.35), color = "black", size = 0.5) + 
+  geom_text(aes(x = 6, y = 2.38), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 6.5, xend = 11.5, y = 2.4, yend = 2.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 6.5, xend = 6.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
+
+geom_segment(aes(x = 0.5, xend = 6.5, y = 2.6, yend = 2.6), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 6.5, xend = 6.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 6.5, xend = 7.5, y = 2.55, yend = 2.55), color = "black", size = 0.5) + 
+  geom_text(aes(x = 7, y = 2.58), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 7.5, xend = 11.5, y = 2.6, yend = 2.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 7.5, xend = 7.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
+  
+geom_segment(aes(x = 0.5, xend = 9.45, y = 2.8, yend = 2.8), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 2.7, yend = 2.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 9.45, xend = 9.45, y = 2.7, yend = 2.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 9.45, xend = 9.55, y = 2.75, yend = 2.75), color = "black", size = 0.5) + 
+  geom_text(aes(x = 9.5, y = 2.82), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 9.55, xend = 11.5, y = 2.8, yend = 2.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 9.55, xend = 9.55, y = 2.7, yend = 2.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 2.7, yend = 2.8), color = "black", size = 0.5)
+
+print(gratitude_graph)
+```
+
+#Happy
+```{r happy data}
+control_1_ef <- effsize::cohen.d(control$happy_all, grat_list$happy_all, hedges.correction = TRUE)
+control_2_ef <- effsize::cohen.d(control$happy_all, grat_letter$happy_all, hedges.correction = TRUE)
+control_3_ef <- effsize::cohen.d(control$happy_all, grat_text$happy_all, hedges.correction = TRUE)
+control_4_ef <- effsize::cohen.d(control$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+control_5_ef <- effsize::cohen.d(control$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+control_6_ef <- effsize::cohen.d(control$happy_all, grat_god_list$happy_all, hedges.correction = TRUE)
+control_7_ef <- effsize::cohen.d(control$happy_all, grat_god_list$happy_all, hedges.correction = TRUE)
+
+con_1_ef <- effsize::cohen.d(control$happy_all, control_events$happy_all, hedges.correction = TRUE)
+con_2_ef <- effsize::cohen.d(control$happy_all, control_interesting$happy_all, hedges.correction = TRUE)
+con_3_ef <- effsize::cohen.d(control$happy_all, control_hassles$happy_all, hedges.correction = TRUE)
+```
+
+```{r happy groups}
+
+# Calculate standard error of the mean for each condition
+happy_se <- tapply(data$happy_all, data$condition, function(x) sd(x) / sqrt(length(x)))
+
+# Calculate average happy by condition
+happy_mean <- tapply(data$happy_all, data$condition, mean) - 3.996053
+
+# Dataframe
+happy_data <- data.frame(
+  condition = conditions,
+  happy_mean = happy_mean,
+  happy_se = happy_se,
+  happy_ef = -(c(0, con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate, control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate,control_6_ef$estimate,control_7_ef$estimate))
+)
+
+# Assign ordered condition titles, colors, and names
+happy_data <- happy_data %>%
+  mutate(condition_color = case_when(
+    condition == "1" ~ "indianred",
+    condition == "2" ~ "lightsalmon",
+    condition == "3" ~ "lightgoldenrod",
+    condition == "4" ~ "palegreen2",
+    condition == "5" ~ "deepskyblue2",
+    condition == "6" ~ "orchid",
+    condition == "7" ~ "tan",
+    condition == "8" ~ "lightblue",
+    condition == "9" ~ "lightpink",
+    condition == "10" ~ "gray",
+    condition == "11" ~ "aquamarine",
+    TRUE ~ "Other"))
+
+happy_data <- happy_data %>%
+  mutate(condition_name = case_when(
+    condition == "1" ~ "Measurement Only",
+    condition == "2" ~ "Events List",
+    condition == "3" ~ "Interesting Events List",
+    condition == "4" ~ "Hassles List",
+    condition == "5" ~ "Gratitude List",
+    condition == "6" ~ "Gratitude Letter",
+    condition == "7" ~ "Gratitude Text",
+    condition == "8" ~ "Chan Gratitude List",
+    condition == "9" ~ "Mental Subtraction Task",
+    condition == "10" ~ "Gratitude to God List",
+    condition == "11" ~ "Gratitude to God Letter",
+    TRUE ~ "Other"))
+
+# Reorder the factor levels of ordered_condition_name based on ascending mean values
+happy_data$ordered_condition_name <- factor(happy_data$condition_name, levels = happy_data$condition_name[order(happy_data$happy_mean)])
+happy_data$ordered_condition_color <- factor(happy_data$condition_color, levels = unique(happy_data$condition_color))
+
+# Calculate range of y-axis values for bars
+happy_y_range <- range(happy_data$happy_mean)
+
+# Calculate range of effect sizes
+happy_effect_size_range <- range(happy_data$happy_ef)
+
+# Scale effect sizes to match y-axis range
+happy_scaled_effect_sizes <- rescale(happy_data$happy_ef, to = happy_y_range)
+```
+```{r happy graph}
+
+# Plot the graph
+happy_graph <- ggplot(happy_data, aes(x = ordered_condition_name, y = happy_mean, fill = ordered_condition_color)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = happy_mean - happy_se, 
+                    ymax = happy_mean + happy_se),
+                width = 0.2, position = position_dodge(0.9)) + 
+  geom_line(aes(y = happy_scaled_effect_sizes), color = "red") +  # Line for effect sizes
+  labs(x = "Conditions",
+       y = "Mean Self-Reported PA Satisfaction",
+       title = "Mean PA across Conditions") +
+  ylim(-0.5, 2) + 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),  
+        axis.ticks.y = element_line(color = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_blank()) +
+  scale_fill_manual(values = unique(happy_data$condition_color),
+                    labels = unique(happy_data$ordered_condition_name)) +
+  guides(fill = guide_legend(title = "Condition")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1),
+                     sec.axis = sec_axis(~ rescale(., from = happy_y_range, to = happy_effect_size_range),
+                                         name = "Effect Size",  
+                                         labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1))) +
+  geom_segment(aes(x = 0.5, xend = 1.45, y = 1.2, yend = 1.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 1.45, xend = 1.45, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 1.45, xend = 1.55, y = 1.15, yend = 1.15), color = "black", size = 0.5) + 
+  geom_text(aes(x = 1.5, y = 1.22), label = "*", color = "red", size = 5) +
+  geom_segment(aes(x = 1.55, xend = 11.5, y = 1.2, yend = 1.2), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 1.55, xend = 1.55, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
+  
+  geom_segment(aes(x = 0.5, xend = 3.5, y = 1.4, yend = 1.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 3.5, xend = 3.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 3.5, xend = 4.5, y = 1.35, yend = 1.35), color = "black", size = 0.5) +
+  geom_text(aes(x = 4, y = 1.38), label = "*", color = "red", size = 5) +
+  geom_segment(aes(x = 4.5, xend = 11.5, y = 1.4, yend = 1.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 4.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
+  
+  geom_segment(aes(x = 0.5, xend = 4.5, y = 1.6, yend = 1.6), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 4.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 8.5, y = 1.55, yend = 1.55), color = "black", size = 0.5) + 
+  geom_text(aes(x = 6.5, y = 1.58), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 8.5, xend = 11.5, y = 1.6, yend = 1.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 8.5, xend = 8.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
+  
+  geom_segment(aes(x = 0.5, xend = 8.5, y = 1.8, yend = 1.8), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 8.5, xend = 8.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 8.5, xend = 10.5, y = 1.75, yend = 1.75), color = "black", size = 0.5) + 
+  geom_text(aes(x = 9.5, y = 1.78), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 10.5, xend = 11.5, y = 1.8, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 10.5, xend = 10.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 1.7, yend = 1.8), color = "black", size = 0.5)
+
+print(happy_graph)
+```
+
+#Sad
+```{r sad data}
+control_1_ef <- effsize::cohen.d(control$sad_all, grat_list$sad_all, hedges.correction = TRUE)
+control_2_ef <- effsize::cohen.d(control$sad_all, grat_letter$sad_all, hedges.correction = TRUE)
+control_3_ef <- effsize::cohen.d(control$sad_all, grat_text$sad_all, hedges.correction = TRUE)
+control_4_ef <- effsize::cohen.d(control$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+control_5_ef <- effsize::cohen.d(control$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+control_6_ef <- effsize::cohen.d(control$sad_all, grat_god_list$sad_all, hedges.correction = TRUE)
+control_7_ef <- effsize::cohen.d(control$sad_all, grat_god_list$sad_all, hedges.correction = TRUE)
+
+con_1_ef <- effsize::cohen.d(control$sad_all, control_events$sad_all, hedges.correction = TRUE)
+con_2_ef <- effsize::cohen.d(control$sad_all, control_interesting$sad_all, hedges.correction = TRUE)
+con_3_ef <- effsize::cohen.d(control$sad_all, control_hassles$sad_all, hedges.correction = TRUE)
+```
+
+```{r sad groups}
+
+# Calculate standard error of the mean for each condition
+sad_se <- tapply(data$sad_all, data$condition, function(x) sd(x) / sqrt(length(x)))
+
+# Calculate average sad by condition
+sad_mean <- tapply(data$sad_all, data$condition, mean) - 2.740132
+
+# Dataframe
+sad_data <- data.frame(
+  condition = conditions,
+  sad_mean = sad_mean,
+  sad_se = sad_se,
+  sad_ef = -(c(0, con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate, control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate,control_6_ef$estimate,control_7_ef$estimate))
+)
+
+# Assign ordered condition titles, colors, and names
+sad_data <- sad_data %>%
+  mutate(condition_color = case_when(
+    condition == "1" ~ "indianred",
+    condition == "2" ~ "lightsalmon",
+    condition == "3" ~ "lightgoldenrod",
+    condition == "4" ~ "palegreen2",
+    condition == "5" ~ "deepskyblue2",
+    condition == "6" ~ "orchid",
+    condition == "7" ~ "tan",
+    condition == "8" ~ "lightblue",
+    condition == "9" ~ "lightpink",
+    condition == "10" ~ "gray",
+    condition == "11" ~ "aquamarine",
+    TRUE ~ "Other"))
+
+sad_data <- sad_data %>%
+  mutate(condition_name = case_when(
+    condition == "1" ~ "Measurement Only",
+    condition == "2" ~ "Events List",
+    condition == "3" ~ "Interesting Events List",
+    condition == "4" ~ "Hassles List",
+    condition == "5" ~ "Gratitude List",
+    condition == "6" ~ "Gratitude Letter",
+    condition == "7" ~ "Gratitude Text",
+    condition == "8" ~ "Chan Gratitude List",
+    condition == "9" ~ "Mental Subtraction Task",
+    condition == "10" ~ "Gratitude to God List",
+    condition == "11" ~ "Gratitude to God Letter",
+    TRUE ~ "Other"))
+
+# Reorder the factor levels of ordered_condition_name based on ascending mean values
+sad_data$ordered_condition_name <- factor(sad_data$condition_name, levels = sad_data$condition_name[order(sad_data$sad_mean)])
+sad_data$ordered_condition_color <- factor(sad_data$condition_color, levels = unique(sad_data$condition_color))
+
+# Calculate range of y-axis values for bars
+sad_y_range <- range(sad_data$sad_mean)
+
+# Calculate range of effect sizes
+sad_effect_size_range <- range(sad_data$sad_ef)
+
+# Scale effect sizes to match y-axis range
+sad_scaled_effect_sizes <- rescale(sad_data$sad_ef, to = sad_y_range)
+```
+```{r sad graph}
+
+# Plot the graph
+sad_graph <- ggplot(sad_data, aes(x = ordered_condition_name, y = sad_mean, fill = ordered_condition_color)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = sad_mean - sad_se, 
+                    ymax = sad_mean + sad_se),
+                width = 0.2, position = position_dodge(0.9)) + 
+  labs(x = "Conditions",
+       y = "Mean Self-Reported NA",
+       title = "Mean NA across Conditions") +
+  ylim(-0.5, 2.5) + 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),  
+        axis.ticks.y = element_line(color = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_blank()) +
+  scale_fill_manual(values = unique(sad_data$condition_color),
+                    labels = unique(sad_data$ordered_condition_name)) +
+  guides(fill = guide_legend(title = "Condition")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1),
+                     sec.axis = sec_axis(~ rescale(., from = sad_y_range, to = sad_effect_size_range), name = "Effect Size", labels = scales::number_format(accuracy = 0.1))) +
+  
+  geom_segment(aes(x = 0.5, xend = 8.5, y = 0.2, yend = 0.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 8.5, xend = 8.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 8.5, xend = 10.5, y = 0.175, yend = 0.175), color = "black", size = 0.5) + 
+  geom_text(aes(x = 9.5, y = 0.178), label = "*", color = "red", size = 5) +
+  geom_segment(aes(x = 10.5, xend = 11.5, y = 0.2, yend = 0.2), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 10.5, xend = 10.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
+  
+  geom_segment(aes(x = 0.5, xend = 7.5, y = 0.3, yend = 0.3), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
+  geom_segment(aes(x = 7.5, xend = 7.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
+  geom_segment(aes(x = 7.5, xend = 9.5, y = 0.275, yend = 0.275), color = "black", size = 0.5) + 
+  geom_text(aes(x = 8.5, y = 0.278), label = "*", color = "red", size = 5) +
+  geom_segment(aes(x = 9.5, xend = 11.5, y = 0.3, yend = 0.3), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 9.5, xend = 9.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
+
+geom_segment(aes(x = 0.5, xend = 4.5, y = 0.4, yend = 0.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 0.35, yend = 0.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 4.5, y = 0.35, yend = 0.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 4.5, xend = 8.5, y = 0.375, yend = 0.375), color = "black", size = 0.5) + 
+  geom_text(aes(x = 6.5, y = 0.378), label = "*", color = "red", size = 5) +
+  geom_segment(aes(x = 8.5, xend = 11.5, y = 0.4, yend = 0.4), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 8.5, xend = 8.5, y = 0.35, yend = 0.4), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 0.35, yend = 0.4), color = "black", size = 0.5) 
+
+print(sad_graph)
+
+```
+#Life Satisfaction
+```{r ls data}
+control_1_ef <- effsize::cohen.d(control$ls_total, grat_list$ls_total, hedges.correction = TRUE)
+control_2_ef <- effsize::cohen.d(control$ls_total, grat_letter$ls_total, hedges.correction = TRUE)
+control_3_ef <- effsize::cohen.d(control$ls_total, grat_text$ls_total, hedges.correction = TRUE)
+control_4_ef <- effsize::cohen.d(control$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+control_5_ef <- effsize::cohen.d(control$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+control_6_ef <- effsize::cohen.d(control$ls_total, grat_god_list$ls_total, hedges.correction = TRUE)
+control_7_ef <- effsize::cohen.d(control$ls_total, grat_god_list$ls_total, hedges.correction = TRUE)
+
+con_1_ef <- effsize::cohen.d(control$ls_total, control_events$ls_total, hedges.correction = TRUE)
+con_2_ef <- effsize::cohen.d(control$ls_total, control_interesting$ls_total, hedges.correction = TRUE)
+con_3_ef <- effsize::cohen.d(control$ls_total, control_hassles$ls_total, hedges.correction = TRUE)
+```
+
+```{r ls groups}
+
+# Calculate standard error of the mean for each condition
+ls_se <- tapply(data$ls_total, data$condition, function(x) sd(x) / sqrt(length(x)))
+
+# Calculate average sad by condition
+ls_mean <- tapply(data$ls_total, data$condition, mean) - 3.825
+
+# Dataframe
+ls_data <- data.frame(
+  condition = conditions,
+  ls_mean = ls_mean,
+  ls_se = ls_se,
+  ls_ef = -(c(0, con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate, control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate,control_6_ef$estimate,control_7_ef$estimate))
+)
+
+# Assign ordered condition titles, colors, and names
+ls_data <- ls_data %>%
+  mutate(condition_color = case_when(
+    condition == "1" ~ "indianred",
+    condition == "2" ~ "lightsalmon",
+    condition == "3" ~ "lightgoldenrod",
+    condition == "4" ~ "palegreen2",
+    condition == "5" ~ "deepskyblue2",
+    condition == "6" ~ "orchid",
+    condition == "7" ~ "tan",
+    condition == "8" ~ "lightblue",
+    condition == "9" ~ "lightpink",
+    condition == "10" ~ "gray",
+    condition == "11" ~ "aquamarine",
+    TRUE ~ "Other"))
+
+ls_data <- ls_data %>%
+  mutate(condition_name = case_when(
+    condition == "1" ~ "Measurement Only",
+    condition == "2" ~ "Events List",
+    condition == "3" ~ "Interesting Events List",
+    condition == "4" ~ "Hassles List",
+    condition == "5" ~ "Gratitude List",
+    condition == "6" ~ "Gratitude Letter",
+    condition == "7" ~ "Gratitude Text",
+    condition == "8" ~ "Chan Gratitude List",
+    condition == "9" ~ "Mental Subtraction Task",
+    condition == "10" ~ "Gratitude to God List",
+    condition == "11" ~ "Gratitude to God Letter",
+    TRUE ~ "Other"))
+
+# Reorder the factor levels of ordered_condition_name based on ascending mean values
+ls_data$ordered_condition_name <- factor(ls_data$condition_name, levels = ls_data$condition_name[order(ls_data$ls_mean)])
+ls_data$ordered_condition_color <- factor(ls_data$condition_color, levels = unique(ls_data$condition_color))
+
+# Calculate range of y-axis values for bars
+ls_y_range <- range(ls_data$ls_mean)
+
+# Calculate range of effect sizes
+ls_effect_size_range <- range(ls_data$ls_ef)
+
+# Scale effect sizes to match y-axis range
+ls_scaled_effect_sizes <- rescale(ls_data$ls_ef, to = ls_y_range)
+```
+```{r ls graph}
+
+ls_graph <- ggplot(ls_data, aes(x = ordered_condition_name, y = ls_mean, fill = ordered_condition_color)) +
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = ls_mean - ls_se, 
+                    ymax = ls_mean + ls_se),
+                width = 0.2, position = position_dodge(0.9)) + 
+  geom_line(aes(y = ls_scaled_effect_sizes), color = "red") +  # Line for effect sizes
+  labs(x = "Conditions",
+       y = "Mean Self-Reported Life Satisfaction",
+       title = "Mean Life Satisfaction across Conditions") +
+  ylim(-0.5, 2) + 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),  
+        axis.ticks.y = element_line(color = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_blank()) +
+  scale_fill_manual(values = unique(ls_data$condition_color),
+                    labels = unique(ls_data$ordered_condition_name)) +
+  guides(fill = guide_legend(title = "Condition")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1),
+                     sec.axis = sec_axis(~ rescale(., from = ls_y_range, to = ls_effect_size_range),
+                                         name = "Effect Size",  
+                                         labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1))) +
+  geom_segment(aes(x = 0.5, xend = 2.5, y = 0.65, yend = 0.65), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
+  geom_segment(aes(x = 2.5, xend = 2.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
+  geom_segment(aes(x = 2.5, xend = 8.5, y = 0.625, yend = 0.625), color = "black", size = 0.5) + 
+  geom_text(aes(x = 5.5, y = 0.63), label = "*", color = "red", size = 5) +
+  geom_segment(aes(x = 8.5, xend = 11.5, y = 0.65, yend = 0.65), color = "black", size = 0.5) + 
+  geom_segment(aes(x = 8.5, xend = 8.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
+  
+  geom_segment(aes(x = 0.5, xend = 3.5, y = 0.75, yend = 0.75), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = 0.7, yend = 0.75), color = "black", size = 0.5) +
+  geom_segment(aes(x = 3.5, xend = 3.5, y = 0.7, yend = 0.75), color = "black", size = 0.5) +
+  geom_segment(aes(x = 3.5, xend = 10.5, y = 0.725, yend = 0.725), color = "black", size = 0.5) +
+  geom_text(aes(x = 6.5, y = 0.73), label = "*", color = "red", size = 5)+
+  geom_segment(aes(x = 10.5, xend = 11.5, y = 0.75, yend = 0.75), color = "black", size = 0.5) +
+  geom_segment(aes(x = 10.5, xend = 10.5, y = 0.7, yend = 0.75), color = "black", size = 0.5) +
+  geom_segment(aes(x = 11.5, xend = 11.5, y = 0.7, yend = 0.75), color = "black", size = 0.5)
+
+print(ls_graph)
+```
+#Combined Graphs
+```{r combined graphs}
+# Set theme settings for larger plots and smaller titles
+theme_settings <- list(
+  plot.title = theme(text = element_text(size = 8, face = "bold")),  # Adjust title size
+  axis.title = theme(text = element_text(size = 6))    # Adjust axis title size
+)
+
+# Combine the plots with adjusted theme settings
+combined_plots <- (
+  (gratitude_graph + theme_settings + theme(legend.position = "none")) +
+  (happy_graph + theme_settings + theme(legend.position = "none")) +
+  (sad_graph + theme_settings + theme(legend.position = "none")) +
+  (ls_graph + theme_settings + theme(legend.position = "right"))
+) + plot_layout(guides = "collect")  # Collect legends into one
+
+# Set the size of the plot
+options(repr.plot.width = 15, repr.plot.height = 13)  # Adjust width and height as needed
+
+# Print the combined plot
+print(combined_plots)
+```
+

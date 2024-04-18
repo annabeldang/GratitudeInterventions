@@ -1,0 +1,2647 @@
+---
+title: "Study 2 Pairwise Analysis"
+author: "Annabel Dang"
+date: "2024-04-10"
+---
+
+#Libraries
+
+```{r setup, include=FALSE}
+
+library(effsize)
+install.packages("effsize")
+
+library(compute.es)
+install.packages("compute.es")
+
+library(ggplot2)
+install.packages("ggplot2")
+
+library(ggsignif)
+install.packages("ggsignif")
+
+library(dplyr)
+install.packages("dplyr")
+
+library(readr)
+install.packages("readr")
+
+```
+
+#Categories
+
+```{r categories}
+
+#Set up
+setwd("/Users/beheo/Desktop/Gratitude Interventions Study/Study 1")
+
+study_1.1 <- read.csv("Gratitude_Interventions_Study_1.1.csv")
+study_1.1 <- study_1.1[study_1.1$Finished == 1, ]
+
+study_1.2 <- read.csv("Gratitude_Interventions_Study_1.2.csv")
+study_1.2 <- study_1.2[study_1.2$Finished == 1, ]
+
+study_1.3 <- read.csv("Gratitude_Interventions_Study_1.3.csv")
+study_1.3 <- study_1.3[study_1.3$Finished == 1, ]
+study_1.3$race_2 <- as.numeric(study_1.3$race_2)
+
+study_1.4 <- read.csv("Gratitude_Interventions_Study_1.4.csv")
+study_1.4 <- study_1.4[study_1.4$Finished == 1, ]
+study_1.4$race_2 <- as.numeric(study_1.4$race_2)
+
+# File paths
+file_paths <- c("Gratitude_Interventions_Study_1.1.csv",
+                "Gratitude_Interventions_Study_1.2.csv",
+                "Gratitude_Interventions_Study_1.3.csv",
+                "Gratitude_Interventions_Study_1.4.csv")
+
+# Read and combine the CSV files
+data <- lapply(file_paths, read.csv)
+data_temp1 <- bind_rows(study_1.1, study_1.2)
+data_temp2 <- bind_rows(data_temp1, study_1.3)
+data <- bind_rows(data_temp2, study_1.4)
+
+# View the combined data
+head(data)
+
+```
+
+```{r set up}
+
+data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
+data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
+data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
+data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious", "nervous")], na.rm = TRUE)
+data$indebted_all <- rowMeans(data[, c("indebted", "obligated")], na.rm = TRUE)
+data$envy_all <- rowMeans(data[, c("envious", "bitter", "jealous")], na.rm = TRUE)
+
+data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
+data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
+data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+
+```
+
+```{r categories}
+#Conditions
+gratitude_conditions <- subset(data, condition_type == 1)
+control_conditions <- subset(data, condition_type == 2)
+
+control <- subset(data, condition == 1)
+control_events <- subset(data, condition == 2)
+control_interesting <- subset(data, condition == 3)
+control_hassles <- subset(data, condition == 4)
+
+grat_list <- subset(data, condition == 5)
+grat_letter <- subset(data, condition == 6)
+grat_text <- subset(data, condition == 7)
+grat_hk <- subset(data, condition == 8)
+grat_sing <- subset(data, condition == 9)
+
+conditions_1 <- c("Measurement Only/Gratitude List", "Measurement Only/Gratitude Letter", "Measurement Only/Gratitude Text", "Measurement Only/Chan Gratitude List", "Measurement Only/Mental Subtraction Task")
+conditions_2 <- c("Events/Gratitude List", "Events/Gratitude Letter", "Events/Gratitude Text", "Events/Chan Gratitude List", "Events/Mental Subtraction Task")
+conditions_3 <- c("Interesting Events/Gratitude List", "Interesting Events/Gratitude Letter", "Interesting Events/Gratitude Text", "Interesting Events/Chan Gratitude List", "Interesting Events/Mental Subtraction Task")
+conditions_4 <- c("Hassles/Gratitude List", "Hassles/Gratitude Letter", "Hassles/Gratitude Text", "Hassles/Chan Gratitude List", "Hassles/Mental Subtraction Task")
+conditions_5 <- c("Gratitude List/Gratitude Letter", "Gratitude List/Gratitude Text", "Gratitude List/Chan Gratitude List", "Gratitude List/Mental Subtraction Task", "Gratitude Letter/Gratitude Text", "Gratitude Letter/Chan Gratitude List", "Gratitude Letter/Mental Subtraction Task", "Gratitude Text/Chan Gratitude List", "Gratitude Text/Mental Subtraction Task", "Chan Gratitude List/Mental Subtraction Task")
+conditions_6 <- c("Measurement Only/Events", "Measurement Only/Interesting Events", "Measurement Only/Hassles", "Events/Interesting Events", "Events/Hassles", "Interesting Events/Hassles")
+```
+
+#t-Tests (State Gratitude)
+
+```{r measurement only (gratitude)}
+control_1 <- t.test(control$gratitude_all, grat_list$gratitude_all)
+control_1_ef <- effsize::cohen.d(control$gratitude_all, grat_list$gratitude_all, hedges.correction = TRUE)
+
+control_2 <- t.test(control$gratitude_all, grat_letter$gratitude_all)
+control_2_ef <- effsize::cohen.d(control$gratitude_all, grat_letter$gratitude_all, hedges.correction = TRUE)
+
+control_3 <- t.test(control$gratitude_all, grat_text$gratitude_all)
+control_3_ef <- effsize::cohen.d(control$gratitude_all, grat_text$gratitude_all, hedges.correction = TRUE)
+
+control_4 <- t.test(control$gratitude_all, grat_hk$gratitude_all)
+control_4_ef <- effsize::cohen.d(control$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+
+control_5 <- t.test(control$gratitude_all, grat_sing$gratitude_all)
+control_5_ef <- effsize::cohen.d(control$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (gratitude)}
+#Events
+
+events_1 <- t.test(control_events$gratitude_all, grat_list$gratitude_all)
+events_1_ef <- effsize::cohen.d(control_events$gratitude_all, grat_list$gratitude_all, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$gratitude_all, grat_letter$gratitude_all)
+events_2_ef <- effsize::cohen.d(control_events$gratitude_all, grat_letter$gratitude_all, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$gratitude_all, grat_text$gratitude_all)
+events_3_ef <- effsize::cohen.d(control_events$gratitude_all, grat_text$gratitude_all, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$gratitude_all, grat_hk$gratitude_all)
+events_4_ef <- effsize::cohen.d(control_events$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$gratitude_all, grat_sing$gratitude_all)
+events_5_ef <- effsize::cohen.d(control_events$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (gratitude)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$gratitude_all, grat_list$gratitude_all)
+int_1_ef <- effsize::cohen.d(control_interesting$gratitude_all, grat_list$gratitude_all, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$gratitude_all, grat_letter$gratitude_all)
+int_2_ef <- effsize::cohen.d(control_interesting$gratitude_all, grat_letter$gratitude_all, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$gratitude_all, grat_text$gratitude_all)
+int_3_ef <- effsize::cohen.d(control_interesting$gratitude_all, grat_text$gratitude_all, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$gratitude_all, grat_hk$gratitude_all)
+int_4_ef <- effsize::cohen.d(control_interesting$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$gratitude_all, grat_sing$gratitude_all)
+int_5_ef <- effsize::cohen.d(control_interesting$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (gratitude)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$gratitude_all, grat_list$gratitude_all)
+hassles_1_ef <- effsize::cohen.d(control_hassles$gratitude_all, grat_list$gratitude_all, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$gratitude_all, grat_letter$gratitude_all)
+hassles_2_ef <- effsize::cohen.d(control_hassles$gratitude_all, grat_letter$gratitude_all, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$gratitude_all, grat_text$gratitude_all)
+hassles_3_ef <- effsize::cohen.d(control_hassles$gratitude_all, grat_text$gratitude_all, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$gratitude_all, grat_hk$gratitude_all)
+hassles_4_ef <- effsize::cohen.d(control_hassles$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$gratitude_all, grat_sing$gratitude_all)
+hassles_5_ef <- effsize::cohen.d(control_hassles$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (gratitude)}
+
+grat_1 <- t.test(grat_list$gratitude_all, grat_letter$gratitude_all)
+grat_1_ef <- effsize::cohen.d(grat_list$gratitude_all, grat_letter$gratitude_all, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$gratitude_all, grat_text$gratitude_all)
+grat_2_ef <- effsize::cohen.d(grat_list$gratitude_all, grat_text$gratitude_all, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$gratitude_all, grat_hk$gratitude_all)
+grat_3_ef <- effsize::cohen.d(grat_list$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$gratitude_all, grat_sing$gratitude_all)
+grat_4_ef <- effsize::cohen.d(grat_list$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$gratitude_all, grat_text$gratitude_all)
+grat_5_ef <- effsize::cohen.d(grat_letter$gratitude_all, grat_text$gratitude_all, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$gratitude_all, grat_hk$gratitude_all)
+grat_6_ef <- effsize::cohen.d(grat_letter$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$gratitude_all, grat_sing$gratitude_all)
+grat_7_ef <- effsize::cohen.d(grat_letter$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$gratitude_all, grat_hk$gratitude_all)
+grat_8_ef <- effsize::cohen.d(grat_text$gratitude_all, grat_hk$gratitude_all, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$gratitude_all, grat_sing$gratitude_all)
+grat_9_ef <- effsize::cohen.d(grat_text$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$gratitude_all, grat_sing$gratitude_all)
+grat_10_ef <- effsize::cohen.d(grat_hk$gratitude_all, grat_sing$gratitude_all, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (gratitude)}
+con_1 <- t.test(control$gratitude_all, control_events$gratitude_all)
+con_1_ef <- effsize::cohen.d(control$gratitude_all, control_events$gratitude_all, hedges.correction = TRUE)
+
+con_2 <- t.test(control$gratitude_all, control_interesting$gratitude_all)
+con_2_ef <- effsize::cohen.d(control$gratitude_all, control_interesting$gratitude_all, hedges.correction = TRUE)
+
+con_3 <- t.test(control$gratitude_all, control_hassles$gratitude_all)
+con_3_ef <- effsize::cohen.d(control$gratitude_all, control_hassles$gratitude_all, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$gratitude_all, control_interesting$gratitude_all)
+con_4_ef <- effsize::cohen.d(control_events$gratitude_all, control_interesting$gratitude_all, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$gratitude_all, control_hassles$gratitude_all)
+con_5_ef <- effsize::cohen.d(control_events$gratitude_all, control_hassles$gratitude_all, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$gratitude_all, control_hassles$gratitude_all)
+con_6_ef <- effsize::cohen.d(control_interesting$gratitude_all, control_hassles$gratitude_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (State PA)
+
+```{r measurement only (PA)}
+control_1 <- t.test(control$happy_all, grat_list$happy_all)
+control_1_ef <- effsize::cohen.d(control$happy_all, grat_list$happy_all, hedges.correction = TRUE)
+
+control_2 <- t.test(control$happy_all, grat_letter$happy_all)
+control_2_ef <- effsize::cohen.d(control$happy_all, grat_letter$happy_all, hedges.correction = TRUE)
+
+control_3 <- t.test(control$happy_all, grat_text$happy_all)
+control_3_ef <- effsize::cohen.d(control$happy_all, grat_text$happy_all, hedges.correction = TRUE)
+
+control_4 <- t.test(control$happy_all, grat_hk$happy_all)
+control_4_ef <- effsize::cohen.d(control$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+
+control_5 <- t.test(control$happy_all, grat_sing$happy_all)
+control_5_ef <- effsize::cohen.d(control$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (PA)}
+#Events
+
+events_1 <- t.test(control_events$happy_all, grat_list$happy_all)
+events_1_ef <- effsize::cohen.d(control_events$happy_all, grat_list$happy_all, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$happy_all, grat_letter$happy_all)
+events_2_ef <- effsize::cohen.d(control_events$happy_all, grat_letter$happy_all, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$happy_all, grat_text$happy_all)
+events_3_ef <- effsize::cohen.d(control_events$happy_all, grat_text$happy_all, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$happy_all, grat_hk$happy_all)
+events_4_ef <- effsize::cohen.d(control_events$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$happy_all, grat_sing$happy_all)
+events_5_ef <- effsize::cohen.d(control_events$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (PA)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$happy_all, grat_list$happy_all)
+int_1_ef <- effsize::cohen.d(control_interesting$happy_all, grat_list$happy_all, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$happy_all, grat_letter$happy_all)
+int_2_ef <- effsize::cohen.d(control_interesting$happy_all, grat_letter$happy_all, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$happy_all, grat_text$happy_all)
+int_3_ef <- effsize::cohen.d(control_interesting$happy_all, grat_text$happy_all, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$happy_all, grat_hk$happy_all)
+int_4_ef <- effsize::cohen.d(control_interesting$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$happy_all, grat_sing$happy_all)
+int_5_ef <- effsize::cohen.d(control_interesting$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (PA)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$happy_all, grat_list$happy_all)
+hassles_1_ef <- effsize::cohen.d(control_hassles$happy_all, grat_list$happy_all, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$happy_all, grat_letter$happy_all)
+hassles_2_ef <- effsize::cohen.d(control_hassles$happy_all, grat_letter$happy_all, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$happy_all, grat_text$happy_all)
+hassles_3_ef <- effsize::cohen.d(control_hassles$happy_all, grat_text$happy_all, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$happy_all, grat_hk$happy_all)
+hassles_4_ef <- effsize::cohen.d(control_hassles$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$happy_all, grat_sing$happy_all)
+hassles_5_ef <- effsize::cohen.d(control_hassles$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (PA)}
+
+grat_1 <- t.test(grat_list$happy_all, grat_letter$happy_all)
+grat_1_ef <- effsize::cohen.d(grat_list$happy_all, grat_letter$happy_all, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$happy_all, grat_text$happy_all)
+grat_2_ef <- effsize::cohen.d(grat_list$happy_all, grat_text$happy_all, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$happy_all, grat_hk$happy_all)
+grat_3_ef <- effsize::cohen.d(grat_list$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$happy_all, grat_sing$happy_all)
+grat_4_ef <- effsize::cohen.d(grat_list$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$happy_all, grat_text$happy_all)
+grat_5_ef <- effsize::cohen.d(grat_letter$happy_all, grat_text$happy_all, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$happy_all, grat_hk$happy_all)
+grat_6_ef <- effsize::cohen.d(grat_letter$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$happy_all, grat_sing$happy_all)
+grat_7_ef <- effsize::cohen.d(grat_letter$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$happy_all, grat_hk$happy_all)
+grat_8_ef <- effsize::cohen.d(grat_text$happy_all, grat_hk$happy_all, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$happy_all, grat_sing$happy_all)
+grat_9_ef <- effsize::cohen.d(grat_text$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$happy_all, grat_sing$happy_all)
+grat_10_ef <- effsize::cohen.d(grat_hk$happy_all, grat_sing$happy_all, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (PA)}
+con_1 <- t.test(control$happy_all, control_events$happy_all)
+con_1_ef <- effsize::cohen.d(control$happy_all, control_events$happy_all, hedges.correction = TRUE)
+
+con_2 <- t.test(control$happy_all, control_interesting$happy_all)
+con_2_ef <- effsize::cohen.d(control$happy_all, control_interesting$happy_all, hedges.correction = TRUE)
+
+con_3 <- t.test(control$happy_all, control_hassles$happy_all)
+con_3_ef <- effsize::cohen.d(control$happy_all, control_hassles$happy_all, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$happy_all, control_interesting$happy_all)
+con_4_ef <- effsize::cohen.d(control_events$happy_all, control_interesting$happy_all, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$happy_all, control_hassles$happy_all)
+con_5_ef <- effsize::cohen.d(control_events$happy_all, control_hassles$happy_all, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$happy_all, control_hassles$happy_all)
+con_6_ef <- effsize::cohen.d(control_interesting$happy_all, control_hassles$happy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (State Optimism)
+
+```{r measurement only (optimism)}
+control_1 <- t.test(control$optimistic_all, grat_list$optimistic_all)
+control_1_ef <- effsize::cohen.d(control$optimistic_all, grat_list$optimistic_all, hedges.correction = TRUE)
+
+control_2 <- t.test(control$optimistic_all, grat_letter$optimistic_all)
+control_2_ef <- effsize::cohen.d(control$optimistic_all, grat_letter$optimistic_all, hedges.correction = TRUE)
+
+control_3 <- t.test(control$optimistic_all, grat_text$optimistic_all)
+control_3_ef <- effsize::cohen.d(control$optimistic_all, grat_text$optimistic_all, hedges.correction = TRUE)
+
+control_4 <- t.test(control$optimistic_all, grat_hk$optimistic_all)
+control_4_ef <- effsize::cohen.d(control$optimistic_all, grat_hk$optimistic_all, hedges.correction = TRUE)
+
+control_5 <- t.test(control$optimistic_all, grat_sing$optimistic_all)
+control_5_ef <- effsize::cohen.d(control$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (optimism)}
+#Events
+
+events_1 <- t.test(control_events$optimistic_all, grat_list$optimistic_all)
+events_1_ef <- effsize::cohen.d(control_events$optimistic_all, grat_list$optimistic_all, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$optimistic_all, grat_letter$optimistic_all)
+events_2_ef <- effsize::cohen.d(control_events$optimistic_all, grat_letter$optimistic_all, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$optimistic_all, grat_text$optimistic_all)
+events_3_ef <- effsize::cohen.d(control_events$optimistic_all, grat_text$optimistic_all, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$optimistic_all, grat_hk$optimistic_all)
+events_4_ef <- effsize::cohen.d(control_events$optimistic_all, grat_hk$optimistic_all, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$optimistic_all, grat_sing$optimistic_all)
+events_5_ef <- effsize::cohen.d(control_events$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (optimism)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$optimistic_all, grat_list$optimistic_all)
+int_1_ef <- effsize::cohen.d(control_interesting$optimistic_all, grat_list$optimistic_all, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$optimistic_all, grat_letter$optimistic_all)
+int_2_ef <- effsize::cohen.d(control_interesting$optimistic_all, grat_letter$optimistic_all, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$optimistic_all, grat_text$optimistic_all)
+int_3_ef <- effsize::cohen.d(control_interesting$optimistic_all, grat_text$optimistic_all, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$optimistic_all, grat_hk$optimistic_all)
+int_4_ef <- effsize::cohen.d(control_interesting$optimistic_all, grat_hk$optimistic_all, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$optimistic_all, grat_sing$optimistic_all)
+int_5_ef <- effsize::cohen.d(control_interesting$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (optimism)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$optimistic_all, grat_list$optimistic_all)
+hassles_1_ef <- effsize::cohen.d(control_hassles$optimistic_all, grat_list$optimistic_all, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$optimistic_all, grat_letter$optimistic_all)
+hassles_2_ef <- effsize::cohen.d(control_hassles$optimistic_all, grat_letter$optimistic_all, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$optimistic_all, grat_text$optimistic_all)
+hassles_3_ef <- effsize::cohen.d(control_hassles$optimistic_all, grat_text$optimistic_all, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$optimistic_all, grat_hk$optimistic_all)
+hassles_4_ef <- effsize::cohen.d(control_hassles$optimistic_all, grat_hk$optimistic_all, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$optimistic_all, grat_sing$optimistic_all)
+hassles_5_ef <- effsize::cohen.d(control_hassles$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (optimism)}
+
+grat_1 <- t.test(grat_list$optimistic_all, grat_letter$optimistic_all)
+grat_1_ef <- effsize::cohen.d(grat_list$optimistic_all, grat_letter$optimistic_all, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$optimistic_all, grat_text$optimistic_all)
+grat_2_ef <- effsize::cohen.d(grat_list$optimistic_all, grat_text$optimistic_all, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$optimistic_all, grat_hk$optimistic_all)
+grat_3_ef <- effsize::cohen.d(grat_list$optimistic_all, grat_hk$optimistic_all, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$optimistic_all, grat_sing$optimistic_all)
+grat_4_ef <- effsize::cohen.d(grat_list$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$optimistic_all, grat_text$optimistic_all)
+grat_5_ef <- effsize::cohen.d(grat_letter$optimistic_all, grat_text$optimistic_all, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$optimistic_all, grat_hk$optimistic_all)
+grat_6_ef <- effsize::cohen.d(grat_letter$optimistic_all, grat_hk$optimistic_all, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$optimistic_all, grat_sing$optimistic_all)
+grat_7_ef <- effsize::cohen.d(grat_letter$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$optimistic_all, grat_hk$optimistic_all)
+grat_8_ef <- effsize::cohen.d(grat_text$optimistic_all, grat_hk$optimistic_all, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$optimistic_all, grat_sing$optimistic_all)
+grat_9_ef <- effsize::cohen.d(grat_text$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$optimistic_all, grat_sing$optimistic_all)
+grat_10_ef <- effsize::cohen.d(grat_hk$optimistic_all, grat_sing$optimistic_all, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (optimism)}
+con_1 <- t.test(control$optimistic_all, control_events$optimistic_all)
+con_1_ef <- effsize::cohen.d(control$optimistic_all, control_events$optimistic_all, hedges.correction = TRUE)
+
+con_2 <- t.test(control$optimistic_all, control_interesting$optimistic_all)
+con_2_ef <- effsize::cohen.d(control$optimistic_all, control_interesting$optimistic_all, hedges.correction = TRUE)
+
+con_3 <- t.test(control$optimistic_all, control_hassles$optimistic_all)
+con_3_ef <- effsize::cohen.d(control$optimistic_all, control_hassles$optimistic_all, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$optimistic_all, control_interesting$optimistic_all)
+con_4_ef <- effsize::cohen.d(control_events$optimistic_all, control_interesting$optimistic_all, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$optimistic_all, control_hassles$optimistic_all)
+con_5_ef <- effsize::cohen.d(control_events$optimistic_all, control_hassles$optimistic_all, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$optimistic_all, control_hassles$optimistic_all)
+con_6_ef <- effsize::cohen.d(control_interesting$optimistic_all, control_hassles$optimistic_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (State NA)
+
+```{r measurement only (NA)}
+control_1 <- t.test(control$sad_all, grat_list$sad_all)
+control_1_ef <- effsize::cohen.d(control$sad_all, grat_list$sad_all, hedges.correction = TRUE)
+
+control_2 <- t.test(control$sad_all, grat_letter$sad_all)
+control_2_ef <- effsize::cohen.d(control$sad_all, grat_letter$sad_all, hedges.correction = TRUE)
+
+control_3 <- t.test(control$sad_all, grat_text$sad_all)
+control_3_ef <- effsize::cohen.d(control$sad_all, grat_text$sad_all, hedges.correction = TRUE)
+
+control_4 <- t.test(control$sad_all, grat_hk$sad_all)
+control_4_ef <- effsize::cohen.d(control$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+
+control_5 <- t.test(control$sad_all, grat_sing$sad_all)
+control_5_ef <- effsize::cohen.d(control$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (NA)}
+#Events
+
+events_1 <- t.test(control_events$sad_all, grat_list$sad_all)
+events_1_ef <- effsize::cohen.d(control_events$sad_all, grat_list$sad_all, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$sad_all, grat_letter$sad_all)
+events_2_ef <- effsize::cohen.d(control_events$sad_all, grat_letter$sad_all, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$sad_all, grat_text$sad_all)
+events_3_ef <- effsize::cohen.d(control_events$sad_all, grat_text$sad_all, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$sad_all, grat_hk$sad_all)
+events_4_ef <- effsize::cohen.d(control_events$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$sad_all, grat_sing$sad_all)
+events_5_ef <- effsize::cohen.d(control_events$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (NA)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$sad_all, grat_list$sad_all)
+int_1_ef <- effsize::cohen.d(control_interesting$sad_all, grat_list$sad_all, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$sad_all, grat_letter$sad_all)
+int_2_ef <- effsize::cohen.d(control_interesting$sad_all, grat_letter$sad_all, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$sad_all, grat_text$sad_all)
+int_3_ef <- effsize::cohen.d(control_interesting$sad_all, grat_text$sad_all, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$sad_all, grat_hk$sad_all)
+int_4_ef <- effsize::cohen.d(control_interesting$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$sad_all, grat_sing$sad_all)
+int_5_ef <- effsize::cohen.d(control_interesting$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (NA)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$sad_all, grat_list$sad_all)
+hassles_1_ef <- effsize::cohen.d(control_hassles$sad_all, grat_list$sad_all, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$sad_all, grat_letter$sad_all)
+hassles_2_ef <- effsize::cohen.d(control_hassles$sad_all, grat_letter$sad_all, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$sad_all, grat_text$sad_all)
+hassles_3_ef <- effsize::cohen.d(control_hassles$sad_all, grat_text$sad_all, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$sad_all, grat_hk$sad_all)
+hassles_4_ef <- effsize::cohen.d(control_hassles$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$sad_all, grat_sing$sad_all)
+hassles_5_ef <- effsize::cohen.d(control_hassles$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (NA)}
+
+grat_1 <- t.test(grat_list$sad_all, grat_letter$sad_all)
+grat_1_ef <- effsize::cohen.d(grat_list$sad_all, grat_letter$sad_all, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$sad_all, grat_text$sad_all)
+grat_2_ef <- effsize::cohen.d(grat_list$sad_all, grat_text$sad_all, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$sad_all, grat_hk$sad_all)
+grat_3_ef <- effsize::cohen.d(grat_list$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$sad_all, grat_sing$sad_all)
+grat_4_ef <- effsize::cohen.d(grat_list$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$sad_all, grat_text$sad_all)
+grat_5_ef <- effsize::cohen.d(grat_letter$sad_all, grat_text$sad_all, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$sad_all, grat_hk$sad_all)
+grat_6_ef <- effsize::cohen.d(grat_letter$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$sad_all, grat_sing$sad_all)
+grat_7_ef <- effsize::cohen.d(grat_letter$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$sad_all, grat_hk$sad_all)
+grat_8_ef <- effsize::cohen.d(grat_text$sad_all, grat_hk$sad_all, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$sad_all, grat_sing$sad_all)
+grat_9_ef <- effsize::cohen.d(grat_text$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$sad_all, grat_sing$sad_all)
+grat_10_ef <- effsize::cohen.d(grat_hk$sad_all, grat_sing$sad_all, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (NA)}
+con_1 <- t.test(control$sad_all, control_events$sad_all)
+con_1_ef <- effsize::cohen.d(control$sad_all, control_events$sad_all, hedges.correction = TRUE)
+
+con_2 <- t.test(control$sad_all, control_interesting$sad_all)
+con_2_ef <- effsize::cohen.d(control$sad_all, control_interesting$sad_all, hedges.correction = TRUE)
+
+con_3 <- t.test(control$sad_all, control_hassles$sad_all)
+con_3_ef <- effsize::cohen.d(control$sad_all, control_hassles$sad_all, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$sad_all, control_interesting$sad_all)
+con_4_ef <- effsize::cohen.d(control_events$sad_all, control_interesting$sad_all, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$sad_all, control_hassles$sad_all)
+con_5_ef <- effsize::cohen.d(control_events$sad_all, control_hassles$sad_all, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$sad_all, control_hassles$sad_all)
+con_6_ef <- effsize::cohen.d(control_interesting$sad_all, control_hassles$sad_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (State Indebtedness)
+
+```{r measurement only (indebtedness)}
+control_1 <- t.test(control$indebted_all, grat_list$indebted_all)
+control_1_ef <- effsize::cohen.d(control$indebted_all, grat_list$indebted_all, hedges.correction = TRUE)
+
+control_2 <- t.test(control$indebted_all, grat_letter$indebted_all)
+control_2_ef <- effsize::cohen.d(control$indebted_all, grat_letter$indebted_all, hedges.correction = TRUE)
+
+control_3 <- t.test(control$indebted_all, grat_text$indebted_all)
+control_3_ef <- effsize::cohen.d(control$indebted_all, grat_text$indebted_all, hedges.correction = TRUE)
+
+control_4 <- t.test(control$indebted_all, grat_hk$indebted_all)
+control_4_ef <- effsize::cohen.d(control$indebted_all, grat_hk$indebted_all, hedges.correction = TRUE)
+
+control_5 <- t.test(control$indebted_all, grat_sing$indebted_all)
+control_5_ef <- effsize::cohen.d(control$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (indebtedness)}
+#Events
+
+events_1 <- t.test(control_events$indebted_all, grat_list$indebted_all)
+events_1_ef <- effsize::cohen.d(control_events$indebted_all, grat_list$indebted_all, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$indebted_all, grat_letter$indebted_all)
+events_2_ef <- effsize::cohen.d(control_events$indebted_all, grat_letter$indebted_all, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$indebted_all, grat_text$indebted_all)
+events_3_ef <- effsize::cohen.d(control_events$indebted_all, grat_text$indebted_all, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$indebted_all, grat_hk$indebted_all)
+events_4_ef <- effsize::cohen.d(control_events$indebted_all, grat_hk$indebted_all, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$indebted_all, grat_sing$indebted_all)
+events_5_ef <- effsize::cohen.d(control_events$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (indebtedness)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$indebted_all, grat_list$indebted_all)
+int_1_ef <- effsize::cohen.d(control_interesting$indebted_all, grat_list$indebted_all, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$indebted_all, grat_letter$indebted_all)
+int_2_ef <- effsize::cohen.d(control_interesting$indebted_all, grat_letter$indebted_all, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$indebted_all, grat_text$indebted_all)
+int_3_ef <- effsize::cohen.d(control_interesting$indebted_all, grat_text$indebted_all, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$indebted_all, grat_hk$indebted_all)
+int_4_ef <- effsize::cohen.d(control_interesting$indebted_all, grat_hk$indebted_all, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$indebted_all, grat_sing$indebted_all)
+int_5_ef <- effsize::cohen.d(control_interesting$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (indebtedness)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$indebted_all, grat_list$indebted_all)
+hassles_1_ef <- effsize::cohen.d(control_hassles$indebted_all, grat_list$indebted_all, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$indebted_all, grat_letter$indebted_all)
+hassles_2_ef <- effsize::cohen.d(control_hassles$indebted_all, grat_letter$indebted_all, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$indebted_all, grat_text$indebted_all)
+hassles_3_ef <- effsize::cohen.d(control_hassles$indebted_all, grat_text$indebted_all, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$indebted_all, grat_hk$indebted_all)
+hassles_4_ef <- effsize::cohen.d(control_hassles$indebted_all, grat_hk$indebted_all, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$indebted_all, grat_sing$indebted_all)
+hassles_5_ef <- effsize::cohen.d(control_hassles$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (indebtedness)}
+
+grat_1 <- t.test(grat_list$indebted_all, grat_letter$indebted_all)
+grat_1_ef <- effsize::cohen.d(grat_list$indebted_all, grat_letter$indebted_all, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$indebted_all, grat_text$indebted_all)
+grat_2_ef <- effsize::cohen.d(grat_list$indebted_all, grat_text$indebted_all, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$indebted_all, grat_hk$indebted_all)
+grat_3_ef <- effsize::cohen.d(grat_list$indebted_all, grat_hk$indebted_all, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$indebted_all, grat_sing$indebted_all)
+grat_4_ef <- effsize::cohen.d(grat_list$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$indebted_all, grat_text$indebted_all)
+grat_5_ef <- effsize::cohen.d(grat_letter$indebted_all, grat_text$indebted_all, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$indebted_all, grat_hk$indebted_all)
+grat_6_ef <- effsize::cohen.d(grat_letter$indebted_all, grat_hk$indebted_all, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$indebted_all, grat_sing$indebted_all)
+grat_7_ef <- effsize::cohen.d(grat_letter$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$indebted_all, grat_hk$indebted_all)
+grat_8_ef <- effsize::cohen.d(grat_text$indebted_all, grat_hk$indebted_all, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$indebted_all, grat_sing$indebted_all)
+grat_9_ef <- effsize::cohen.d(grat_text$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$indebted_all, grat_sing$indebted_all)
+grat_10_ef <- effsize::cohen.d(grat_hk$indebted_all, grat_sing$indebted_all, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (indebtedness)}
+con_1 <- t.test(control$indebted_all, control_events$indebted_all)
+con_1_ef <- effsize::cohen.d(control$indebted_all, control_events$indebted_all, hedges.correction = TRUE)
+
+con_2 <- t.test(control$indebted_all, control_interesting$indebted_all)
+con_2_ef <- effsize::cohen.d(control$indebted_all, control_interesting$indebted_all, hedges.correction = TRUE)
+
+con_3 <- t.test(control$indebted_all, control_hassles$indebted_all)
+con_3_ef <- effsize::cohen.d(control$indebted_all, control_hassles$indebted_all, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$indebted_all, control_interesting$indebted_all)
+con_4_ef <- effsize::cohen.d(control_events$indebted_all, control_interesting$indebted_all, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$indebted_all, control_hassles$indebted_all)
+con_5_ef <- effsize::cohen.d(control_events$indebted_all, control_hassles$indebted_all, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$indebted_all, control_hassles$indebted_all)
+con_6_ef <- effsize::cohen.d(control_interesting$indebted_all, control_hassles$indebted_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (State Guilt)
+
+```{r measurement only (guilt)}
+control_1 <- t.test(control$guilty, grat_list$guilty)
+control_1_ef <- effsize::cohen.d(control$guilty, grat_list$guilty, hedges.correction = TRUE)
+
+control_2 <- t.test(control$guilty, grat_letter$guilty)
+control_2_ef <- effsize::cohen.d(control$guilty, grat_letter$guilty, hedges.correction = TRUE)
+
+control_3 <- t.test(control$guilty, grat_text$guilty)
+control_3_ef <- effsize::cohen.d(control$guilty, grat_text$guilty, hedges.correction = TRUE)
+
+control_4 <- t.test(control$guilty, grat_hk$guilty)
+control_4_ef <- effsize::cohen.d(control$guilty, grat_hk$guilty, hedges.correction = TRUE)
+
+control_5 <- t.test(control$guilty, grat_sing$guilty)
+control_5_ef <- effsize::cohen.d(control$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (guilt)}
+#Events
+
+events_1 <- t.test(control_events$guilty, grat_list$guilty)
+events_1_ef <- effsize::cohen.d(control_events$guilty, grat_list$guilty, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$guilty, grat_letter$guilty)
+events_2_ef <- effsize::cohen.d(control_events$guilty, grat_letter$guilty, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$guilty, grat_text$guilty)
+events_3_ef <- effsize::cohen.d(control_events$guilty, grat_text$guilty, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$guilty, grat_hk$guilty)
+events_4_ef <- effsize::cohen.d(control_events$guilty, grat_hk$guilty, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$guilty, grat_sing$guilty)
+events_5_ef <- effsize::cohen.d(control_events$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (guilt)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$guilty, grat_list$guilty)
+int_1_ef <- effsize::cohen.d(control_interesting$guilty, grat_list$guilty, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$guilty, grat_letter$guilty)
+int_2_ef <- effsize::cohen.d(control_interesting$guilty, grat_letter$guilty, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$guilty, grat_text$guilty)
+int_3_ef <- effsize::cohen.d(control_interesting$guilty, grat_text$guilty, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$guilty, grat_hk$guilty)
+int_4_ef <- effsize::cohen.d(control_interesting$guilty, grat_hk$guilty, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$guilty, grat_sing$guilty)
+int_5_ef <- effsize::cohen.d(control_interesting$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (guilt)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$guilty, grat_list$guilty)
+hassles_1_ef <- effsize::cohen.d(control_hassles$guilty, grat_list$guilty, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$guilty, grat_letter$guilty)
+hassles_2_ef <- effsize::cohen.d(control_hassles$guilty, grat_letter$guilty, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$guilty, grat_text$guilty)
+hassles_3_ef <- effsize::cohen.d(control_hassles$guilty, grat_text$guilty, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$guilty, grat_hk$guilty)
+hassles_4_ef <- effsize::cohen.d(control_hassles$guilty, grat_hk$guilty, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$guilty, grat_sing$guilty)
+hassles_5_ef <- effsize::cohen.d(control_hassles$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (guilt)}
+
+grat_1 <- t.test(grat_list$guilty, grat_letter$guilty)
+grat_1_ef <- effsize::cohen.d(grat_list$guilty, grat_letter$guilty, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$guilty, grat_text$guilty)
+grat_2_ef <- effsize::cohen.d(grat_list$guilty, grat_text$guilty, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$guilty, grat_hk$guilty)
+grat_3_ef <- effsize::cohen.d(grat_list$guilty, grat_hk$guilty, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$guilty, grat_sing$guilty)
+grat_4_ef <- effsize::cohen.d(grat_list$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$guilty, grat_text$guilty)
+grat_5_ef <- effsize::cohen.d(grat_letter$guilty, grat_text$guilty, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$guilty, grat_hk$guilty)
+grat_6_ef <- effsize::cohen.d(grat_letter$guilty, grat_hk$guilty, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$guilty, grat_sing$guilty)
+grat_7_ef <- effsize::cohen.d(grat_letter$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$guilty, grat_hk$guilty)
+grat_8_ef <- effsize::cohen.d(grat_text$guilty, grat_hk$guilty, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$guilty, grat_sing$guilty)
+grat_9_ef <- effsize::cohen.d(grat_text$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$guilty, grat_sing$guilty)
+grat_10_ef <- effsize::cohen.d(grat_hk$guilty, grat_sing$guilty, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (guilt)}
+con_1 <- t.test(control$guilty, control_events$guilty)
+con_1_ef <- effsize::cohen.d(control$guilty, control_events$guilty, hedges.correction = TRUE)
+
+con_2 <- t.test(control$guilty, control_interesting$guilty)
+con_2_ef <- effsize::cohen.d(control$guilty, control_interesting$guilty, hedges.correction = TRUE)
+
+con_3 <- t.test(control$guilty, control_hassles$guilty)
+con_3_ef <- effsize::cohen.d(control$guilty, control_hassles$guilty, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$guilty, control_interesting$guilty)
+con_4_ef <- effsize::cohen.d(control_events$guilty, control_interesting$guilty, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$guilty, control_hassles$guilty)
+con_5_ef <- effsize::cohen.d(control_events$guilty, control_hassles$guilty, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$guilty, control_hassles$guilty)
+con_6_ef <- effsize::cohen.d(control_interesting$guilty, control_hassles$guilty, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (State Envy)
+
+```{r measurement only (envy)}
+control_1 <- t.test(control$envy_all, grat_list$envy_all)
+control_1_ef <- effsize::cohen.d(control$envy_all, grat_list$envy_all, hedges.correction = TRUE)
+
+control_2 <- t.test(control$envy_all, grat_letter$envy_all)
+control_2_ef <- effsize::cohen.d(control$envy_all, grat_letter$envy_all, hedges.correction = TRUE)
+
+control_3 <- t.test(control$envy_all, grat_text$envy_all)
+control_3_ef <- effsize::cohen.d(control$envy_all, grat_text$envy_all, hedges.correction = TRUE)
+
+control_4 <- t.test(control$envy_all, grat_hk$envy_all)
+control_4_ef <- effsize::cohen.d(control$envy_all, grat_hk$envy_all, hedges.correction = TRUE)
+
+control_5 <- t.test(control$envy_all, grat_sing$envy_all)
+control_5_ef <- effsize::cohen.d(control$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (envy)}
+#Events
+
+events_1 <- t.test(control_events$envy_all, grat_list$envy_all)
+events_1_ef <- effsize::cohen.d(control_events$envy_all, grat_list$envy_all, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$envy_all, grat_letter$envy_all)
+events_2_ef <- effsize::cohen.d(control_events$envy_all, grat_letter$envy_all, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$envy_all, grat_text$envy_all)
+events_3_ef <- effsize::cohen.d(control_events$envy_all, grat_text$envy_all, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$envy_all, grat_hk$envy_all)
+events_4_ef <- effsize::cohen.d(control_events$envy_all, grat_hk$envy_all, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$envy_all, grat_sing$envy_all)
+events_5_ef <- effsize::cohen.d(control_events$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (envy)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$envy_all, grat_list$envy_all)
+int_1_ef <- effsize::cohen.d(control_interesting$envy_all, grat_list$envy_all, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$envy_all, grat_letter$envy_all)
+int_2_ef <- effsize::cohen.d(control_interesting$envy_all, grat_letter$envy_all, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$envy_all, grat_text$envy_all)
+int_3_ef <- effsize::cohen.d(control_interesting$envy_all, grat_text$envy_all, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$envy_all, grat_hk$envy_all)
+int_4_ef <- effsize::cohen.d(control_interesting$envy_all, grat_hk$envy_all, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$envy_all, grat_sing$envy_all)
+int_5_ef <- effsize::cohen.d(control_interesting$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (envy)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$envy_all, grat_list$envy_all)
+hassles_1_ef <- effsize::cohen.d(control_hassles$envy_all, grat_list$envy_all, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$envy_all, grat_letter$envy_all)
+hassles_2_ef <- effsize::cohen.d(control_hassles$envy_all, grat_letter$envy_all, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$envy_all, grat_text$envy_all)
+hassles_3_ef <- effsize::cohen.d(control_hassles$envy_all, grat_text$envy_all, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$envy_all, grat_hk$envy_all)
+hassles_4_ef <- effsize::cohen.d(control_hassles$envy_all, grat_hk$envy_all, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$envy_all, grat_sing$envy_all)
+hassles_5_ef <- effsize::cohen.d(control_hassles$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (envy)}
+
+grat_1 <- t.test(grat_list$envy_all, grat_letter$envy_all)
+grat_1_ef <- effsize::cohen.d(grat_list$envy_all, grat_letter$envy_all, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$envy_all, grat_text$envy_all)
+grat_2_ef <- effsize::cohen.d(grat_list$envy_all, grat_text$envy_all, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$envy_all, grat_hk$envy_all)
+grat_3_ef <- effsize::cohen.d(grat_list$envy_all, grat_hk$envy_all, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$envy_all, grat_sing$envy_all)
+grat_4_ef <- effsize::cohen.d(grat_list$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$envy_all, grat_text$envy_all)
+grat_5_ef <- effsize::cohen.d(grat_letter$envy_all, grat_text$envy_all, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$envy_all, grat_hk$envy_all)
+grat_6_ef <- effsize::cohen.d(grat_letter$envy_all, grat_hk$envy_all, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$envy_all, grat_sing$envy_all)
+grat_7_ef <- effsize::cohen.d(grat_letter$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$envy_all, grat_hk$envy_all)
+grat_8_ef <- effsize::cohen.d(grat_text$envy_all, grat_hk$envy_all, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$envy_all, grat_sing$envy_all)
+grat_9_ef <- effsize::cohen.d(grat_text$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$envy_all, grat_sing$envy_all)
+grat_10_ef <- effsize::cohen.d(grat_hk$envy_all, grat_sing$envy_all, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (envy)}
+con_1 <- t.test(control$envy_all, control_events$envy_all)
+con_1_ef <- effsize::cohen.d(control$envy_all, control_events$envy_all, hedges.correction = TRUE)
+
+con_2 <- t.test(control$envy_all, control_interesting$envy_all)
+con_2_ef <- effsize::cohen.d(control$envy_all, control_interesting$envy_all, hedges.correction = TRUE)
+
+con_3 <- t.test(control$envy_all, control_hassles$envy_all)
+con_3_ef <- effsize::cohen.d(control$envy_all, control_hassles$envy_all, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$envy_all, control_interesting$envy_all)
+con_4_ef <- effsize::cohen.d(control_events$envy_all, control_interesting$envy_all, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$envy_all, control_hassles$envy_all)
+con_5_ef <- effsize::cohen.d(control_events$envy_all, control_hassles$envy_all, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$envy_all, control_hassles$envy_all)
+con_6_ef <- effsize::cohen.d(control_interesting$envy_all, control_hassles$envy_all, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (Life Satisfaction)
+
+```{r measurement only (life satisfaction)}
+control_1 <- t.test(control$ls_total, grat_list$ls_total)
+control_1_ef <- effsize::cohen.d(control$ls_total, grat_list$ls_total, hedges.correction = TRUE)
+
+control_2 <- t.test(control$ls_total, grat_letter$ls_total)
+control_2_ef <- effsize::cohen.d(control$ls_total, grat_letter$ls_total, hedges.correction = TRUE)
+
+control_3 <- t.test(control$ls_total, grat_text$ls_total)
+control_3_ef <- effsize::cohen.d(control$ls_total, grat_text$ls_total, hedges.correction = TRUE)
+
+control_4 <- t.test(control$ls_total, grat_hk$ls_total)
+control_4_ef <- effsize::cohen.d(control$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+
+control_5 <- t.test(control$ls_total, grat_sing$ls_total)
+control_5_ef <- effsize::cohen.d(control$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (life satisfaction)}
+#Events
+
+events_1 <- t.test(control_events$ls_total, grat_list$ls_total)
+events_1_ef <- effsize::cohen.d(control_events$ls_total, grat_list$ls_total, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$ls_total, grat_letter$ls_total)
+events_2_ef <- effsize::cohen.d(control_events$ls_total, grat_letter$ls_total, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$ls_total, grat_text$ls_total)
+events_3_ef <- effsize::cohen.d(control_events$ls_total, grat_text$ls_total, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$ls_total, grat_hk$ls_total)
+events_4_ef <- effsize::cohen.d(control_events$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$ls_total, grat_sing$ls_total)
+events_5_ef <- effsize::cohen.d(control_events$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (life satisfaction)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$ls_total, grat_list$ls_total)
+int_1_ef <- effsize::cohen.d(control_interesting$ls_total, grat_list$ls_total, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$ls_total, grat_letter$ls_total)
+int_2_ef <- effsize::cohen.d(control_interesting$ls_total, grat_letter$ls_total, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$ls_total, grat_text$ls_total)
+int_3_ef <- effsize::cohen.d(control_interesting$ls_total, grat_text$ls_total, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$ls_total, grat_hk$ls_total)
+int_4_ef <- effsize::cohen.d(control_interesting$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$ls_total, grat_sing$ls_total)
+int_5_ef <- effsize::cohen.d(control_interesting$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (life satisfaction)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$ls_total, grat_list$ls_total)
+hassles_1_ef <- effsize::cohen.d(control_hassles$ls_total, grat_list$ls_total, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$ls_total, grat_letter$ls_total)
+hassles_2_ef <- effsize::cohen.d(control_hassles$ls_total, grat_letter$ls_total, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$ls_total, grat_text$ls_total)
+hassles_3_ef <- effsize::cohen.d(control_hassles$ls_total, grat_text$ls_total, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$ls_total, grat_hk$ls_total)
+hassles_4_ef <- effsize::cohen.d(control_hassles$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$ls_total, grat_sing$ls_total)
+hassles_5_ef <- effsize::cohen.d(control_hassles$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (life satisfaction)}
+
+grat_1 <- t.test(grat_list$ls_total, grat_letter$ls_total)
+grat_1_ef <- effsize::cohen.d(grat_list$ls_total, grat_letter$ls_total, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$ls_total, grat_text$ls_total)
+grat_2_ef <- effsize::cohen.d(grat_list$ls_total, grat_text$ls_total, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$ls_total, grat_hk$ls_total)
+grat_3_ef <- effsize::cohen.d(grat_list$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$ls_total, grat_sing$ls_total)
+grat_4_ef <- effsize::cohen.d(grat_list$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$ls_total, grat_text$ls_total)
+grat_5_ef <- effsize::cohen.d(grat_letter$ls_total, grat_text$ls_total, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$ls_total, grat_hk$ls_total)
+grat_6_ef <- effsize::cohen.d(grat_letter$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$ls_total, grat_sing$ls_total)
+grat_7_ef <- effsize::cohen.d(grat_letter$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$ls_total, grat_hk$ls_total)
+grat_8_ef <- effsize::cohen.d(grat_text$ls_total, grat_hk$ls_total, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$ls_total, grat_sing$ls_total)
+grat_9_ef <- effsize::cohen.d(grat_text$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$ls_total, grat_sing$ls_total)
+grat_10_ef <- effsize::cohen.d(grat_hk$ls_total, grat_sing$ls_total, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (life satisfaction)}
+con_1 <- t.test(control$ls_total, control_events$ls_total)
+con_1_ef <- effsize::cohen.d(control$ls_total, control_events$ls_total, hedges.correction = TRUE)
+
+con_2 <- t.test(control$ls_total, control_interesting$ls_total)
+con_2_ef <- effsize::cohen.d(control$ls_total, control_interesting$ls_total, hedges.correction = TRUE)
+
+con_3 <- t.test(control$ls_total, control_hassles$ls_total)
+con_3_ef <- effsize::cohen.d(control$ls_total, control_hassles$ls_total, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$ls_total, control_interesting$ls_total)
+con_4_ef <- effsize::cohen.d(control_events$ls_total, control_interesting$ls_total, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$ls_total, control_hassles$ls_total)
+con_5_ef <- effsize::cohen.d(control_events$ls_total, control_hassles$ls_total, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$ls_total, control_hassles$ls_total)
+con_6_ef <- effsize::cohen.d(control_interesting$ls_total, control_hassles$ls_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (Social Connection)
+
+```{r measurement only (social connection)}
+control_1 <- t.test(control$sc_total, grat_list$sc_total)
+control_1_ef <- effsize::cohen.d(control$sc_total, grat_list$sc_total, hedges.correction = TRUE)
+
+control_2 <- t.test(control$sc_total, grat_letter$sc_total)
+control_2_ef <- effsize::cohen.d(control$sc_total, grat_letter$sc_total, hedges.correction = TRUE)
+
+control_3 <- t.test(control$sc_total, grat_text$sc_total)
+control_3_ef <- effsize::cohen.d(control$sc_total, grat_text$sc_total, hedges.correction = TRUE)
+
+control_4 <- t.test(control$sc_total, grat_hk$sc_total)
+control_4_ef <- effsize::cohen.d(control$sc_total, grat_hk$sc_total, hedges.correction = TRUE)
+
+control_5 <- t.test(control$sc_total, grat_sing$sc_total)
+control_5_ef <- effsize::cohen.d(control$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (social connection)}
+#Events
+
+events_1 <- t.test(control_events$sc_total, grat_list$sc_total)
+events_1_ef <- effsize::cohen.d(control_events$sc_total, grat_list$sc_total, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$sc_total, grat_letter$sc_total)
+events_2_ef <- effsize::cohen.d(control_events$sc_total, grat_letter$sc_total, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$sc_total, grat_text$sc_total)
+events_3_ef <- effsize::cohen.d(control_events$sc_total, grat_text$sc_total, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$sc_total, grat_hk$sc_total)
+events_4_ef <- effsize::cohen.d(control_events$sc_total, grat_hk$sc_total, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$sc_total, grat_sing$sc_total)
+events_5_ef <- effsize::cohen.d(control_events$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (social connection)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$sc_total, grat_list$sc_total)
+int_1_ef <- effsize::cohen.d(control_interesting$sc_total, grat_list$sc_total, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$sc_total, grat_letter$sc_total)
+int_2_ef <- effsize::cohen.d(control_interesting$sc_total, grat_letter$sc_total, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$sc_total, grat_text$sc_total)
+int_3_ef <- effsize::cohen.d(control_interesting$sc_total, grat_text$sc_total, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$sc_total, grat_hk$sc_total)
+int_4_ef <- effsize::cohen.d(control_interesting$sc_total, grat_hk$sc_total, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$sc_total, grat_sing$sc_total)
+int_5_ef <- effsize::cohen.d(control_interesting$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (social connection)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$sc_total, grat_list$sc_total)
+hassles_1_ef <- effsize::cohen.d(control_hassles$sc_total, grat_list$sc_total, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$sc_total, grat_letter$sc_total)
+hassles_2_ef <- effsize::cohen.d(control_hassles$sc_total, grat_letter$sc_total, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$sc_total, grat_text$sc_total)
+hassles_3_ef <- effsize::cohen.d(control_hassles$sc_total, grat_text$sc_total, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$sc_total, grat_hk$sc_total)
+hassles_4_ef <- effsize::cohen.d(control_hassles$sc_total, grat_hk$sc_total, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$sc_total, grat_sing$sc_total)
+hassles_5_ef <- effsize::cohen.d(control_hassles$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (social connection)}
+
+grat_1 <- t.test(grat_list$sc_total, grat_letter$sc_total)
+grat_1_ef <- effsize::cohen.d(grat_list$sc_total, grat_letter$sc_total, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$sc_total, grat_text$sc_total)
+grat_2_ef <- effsize::cohen.d(grat_list$sc_total, grat_text$sc_total, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$sc_total, grat_hk$sc_total)
+grat_3_ef <- effsize::cohen.d(grat_list$sc_total, grat_hk$sc_total, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$sc_total, grat_sing$sc_total)
+grat_4_ef <- effsize::cohen.d(grat_list$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$sc_total, grat_text$sc_total)
+grat_5_ef <- effsize::cohen.d(grat_letter$sc_total, grat_text$sc_total, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$sc_total, grat_hk$sc_total)
+grat_6_ef <- effsize::cohen.d(grat_letter$sc_total, grat_hk$sc_total, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$sc_total, grat_sing$sc_total)
+grat_7_ef <- effsize::cohen.d(grat_letter$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$sc_total, grat_hk$sc_total)
+grat_8_ef <- effsize::cohen.d(grat_text$sc_total, grat_hk$sc_total, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$sc_total, grat_sing$sc_total)
+grat_9_ef <- effsize::cohen.d(grat_text$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$sc_total, grat_sing$sc_total)
+grat_10_ef <- effsize::cohen.d(grat_hk$sc_total, grat_sing$sc_total, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (social connection)}
+con_1 <- t.test(control$sc_total, control_events$sc_total)
+con_1_ef <- effsize::cohen.d(control$sc_total, control_events$sc_total, hedges.correction = TRUE)
+
+con_2 <- t.test(control$sc_total, control_interesting$sc_total)
+con_2_ef <- effsize::cohen.d(control$sc_total, control_interesting$sc_total, hedges.correction = TRUE)
+
+con_3 <- t.test(control$sc_total, control_hassles$sc_total)
+con_3_ef <- effsize::cohen.d(control$sc_total, control_hassles$sc_total, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$sc_total, control_interesting$sc_total)
+con_4_ef <- effsize::cohen.d(control_events$sc_total, control_interesting$sc_total, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$sc_total, control_hassles$sc_total)
+con_5_ef <- effsize::cohen.d(control_events$sc_total, control_hassles$sc_total, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$sc_total, control_hassles$sc_total)
+con_6_ef <- effsize::cohen.d(control_interesting$sc_total, control_hassles$sc_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (Ladder)
+
+```{r measurement only (ladder)}
+control_1 <- t.test(control$ladder, grat_list$ladder)
+control_1_ef <- effsize::cohen.d(control$ladder, grat_list$ladder, hedges.correction = TRUE)
+
+control_2 <- t.test(control$ladder, grat_letter$ladder)
+control_2_ef <- effsize::cohen.d(control$ladder, grat_letter$ladder, hedges.correction = TRUE)
+
+control_3 <- t.test(control$ladder, grat_text$ladder)
+control_3_ef <- effsize::cohen.d(control$ladder, grat_text$ladder, hedges.correction = TRUE)
+
+control_4 <- t.test(control$ladder, grat_hk$ladder)
+control_4_ef <- effsize::cohen.d(control$ladder, grat_hk$ladder, hedges.correction = TRUE)
+
+control_5 <- t.test(control$ladder, grat_sing$ladder)
+control_5_ef <- effsize::cohen.d(control$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (ladder)}
+#Events
+
+events_1 <- t.test(control_events$ladder, grat_list$ladder)
+events_1_ef <- effsize::cohen.d(control_events$ladder, grat_list$ladder, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$ladder, grat_letter$ladder)
+events_2_ef <- effsize::cohen.d(control_events$ladder, grat_letter$ladder, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$ladder, grat_text$ladder)
+events_3_ef <- effsize::cohen.d(control_events$ladder, grat_text$ladder, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$ladder, grat_hk$ladder)
+events_4_ef <- effsize::cohen.d(control_events$ladder, grat_hk$ladder, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$ladder, grat_sing$ladder)
+events_5_ef <- effsize::cohen.d(control_events$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (ladder)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$ladder, grat_list$ladder)
+int_1_ef <- effsize::cohen.d(control_interesting$ladder, grat_list$ladder, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$ladder, grat_letter$ladder)
+int_2_ef <- effsize::cohen.d(control_interesting$ladder, grat_letter$ladder, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$ladder, grat_text$ladder)
+int_3_ef <- effsize::cohen.d(control_interesting$ladder, grat_text$ladder, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$ladder, grat_hk$ladder)
+int_4_ef <- effsize::cohen.d(control_interesting$ladder, grat_hk$ladder, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$ladder, grat_sing$ladder)
+int_5_ef <- effsize::cohen.d(control_interesting$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (ladder)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$ladder, grat_list$ladder)
+hassles_1_ef <- effsize::cohen.d(control_hassles$ladder, grat_list$ladder, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$ladder, grat_letter$ladder)
+hassles_2_ef <- effsize::cohen.d(control_hassles$ladder, grat_letter$ladder, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$ladder, grat_text$ladder)
+hassles_3_ef <- effsize::cohen.d(control_hassles$ladder, grat_text$ladder, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$ladder, grat_hk$ladder)
+hassles_4_ef <- effsize::cohen.d(control_hassles$ladder, grat_hk$ladder, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$ladder, grat_sing$ladder)
+hassles_5_ef <- effsize::cohen.d(control_hassles$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (ladder)}
+
+grat_1 <- t.test(grat_list$ladder, grat_letter$ladder)
+grat_1_ef <- effsize::cohen.d(grat_list$ladder, grat_letter$ladder, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$ladder, grat_text$ladder)
+grat_2_ef <- effsize::cohen.d(grat_list$ladder, grat_text$ladder, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$ladder, grat_hk$ladder)
+grat_3_ef <- effsize::cohen.d(grat_list$ladder, grat_hk$ladder, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$ladder, grat_sing$ladder)
+grat_4_ef <- effsize::cohen.d(grat_list$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$ladder, grat_text$ladder)
+grat_5_ef <- effsize::cohen.d(grat_letter$ladder, grat_text$ladder, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$ladder, grat_hk$ladder)
+grat_6_ef <- effsize::cohen.d(grat_letter$ladder, grat_hk$ladder, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$ladder, grat_sing$ladder)
+grat_7_ef <- effsize::cohen.d(grat_letter$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$ladder, grat_hk$ladder)
+grat_8_ef <- effsize::cohen.d(grat_text$ladder, grat_hk$ladder, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$ladder, grat_sing$ladder)
+grat_9_ef <- effsize::cohen.d(grat_text$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$ladder, grat_sing$ladder)
+grat_10_ef <- effsize::cohen.d(grat_hk$ladder, grat_sing$ladder, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (ladder)}
+con_1 <- t.test(control$ladder, control_events$ladder)
+con_1_ef <- effsize::cohen.d(control$ladder, control_events$ladder, hedges.correction = TRUE)
+
+con_2 <- t.test(control$ladder, control_interesting$ladder)
+con_2_ef <- effsize::cohen.d(control$ladder, control_interesting$ladder, hedges.correction = TRUE)
+
+con_3 <- t.test(control$ladder, control_hassles$ladder)
+con_3_ef <- effsize::cohen.d(control$ladder, control_hassles$ladder, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$ladder, control_interesting$ladder)
+con_4_ef <- effsize::cohen.d(control_events$ladder, control_interesting$ladder, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$ladder, control_hassles$ladder)
+con_5_ef <- effsize::cohen.d(control_events$ladder, control_hassles$ladder, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$ladder, control_hassles$ladder)
+con_6_ef <- effsize::cohen.d(control_interesting$ladder, control_hassles$ladder, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
+
+#t-Tests (Self Image)
+
+```{r measurement only (self image)}
+control_1 <- t.test(control$self_image_total, grat_list$self_image_total)
+control_1_ef <- effsize::cohen.d(control$self_image_total, grat_list$self_image_total, hedges.correction = TRUE)
+
+control_2 <- t.test(control$self_image_total, grat_letter$self_image_total)
+control_2_ef <- effsize::cohen.d(control$self_image_total, grat_letter$self_image_total, hedges.correction = TRUE)
+
+control_3 <- t.test(control$self_image_total, grat_text$self_image_total)
+control_3_ef <- effsize::cohen.d(control$self_image_total, grat_text$self_image_total, hedges.correction = TRUE)
+
+control_4 <- t.test(control$self_image_total, grat_hk$self_image_total)
+control_4_ef <- effsize::cohen.d(control$self_image_total, grat_hk$self_image_total, hedges.correction = TRUE)
+
+control_5 <- t.test(control$self_image_total, grat_sing$self_image_total)
+control_5_ef <- effsize::cohen.d(control$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_1 <- c(control_1$p.value, control_2$p.value, control_3$p.value, control_4$p.value, control_5$p.value)
+p_values_df <- data.frame(Test = conditions_1, P_Value = p_values_1)
+estimate_1 <- c(control_1_ef$estimate, control_2_ef$estimate, control_3_ef$estimate, control_4_ef$estimate, control_5_ef$estimate)
+statistic_1 <- c(control_1$statistic, control_2$statistic, control_3$statistic, control_4$statistic, control_5$statistic)
+parameter_1 <- c(control_1$parameter, control_2$parameter, control_3$parameter, control_4$parameter, control_5$parameter)
+
+#Table
+table_data_1 <- data.frame(
+  Condition = conditions_1,
+  "t" = statistic_1,
+  "df" = parameter_1,
+  "p" = p_values_1, 
+  "Hedges' g" = estimate_1)
+
+print(table_data_1)
+
+```
+```{r events (self image)}
+#Events
+
+events_1 <- t.test(control_events$self_image_total, grat_list$self_image_total)
+events_1_ef <- effsize::cohen.d(control_events$self_image_total, grat_list$self_image_total, hedges.correction = TRUE)
+
+events_2 <- t.test(control_events$self_image_total, grat_letter$self_image_total)
+events_2_ef <- effsize::cohen.d(control_events$self_image_total, grat_letter$self_image_total, hedges.correction = TRUE)
+
+events_3 <- t.test(control_events$self_image_total, grat_text$self_image_total)
+events_3_ef <- effsize::cohen.d(control_events$self_image_total, grat_text$self_image_total, hedges.correction = TRUE)
+
+events_4 <- t.test(control_events$self_image_total, grat_hk$self_image_total)
+events_4_ef <- effsize::cohen.d(control_events$self_image_total, grat_hk$self_image_total, hedges.correction = TRUE)
+
+events_5 <- t.test(control_events$self_image_total, grat_sing$self_image_total)
+events_5_ef <- effsize::cohen.d(control_events$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_2 <- c(events_1$p.value, events_2$p.value, events_3$p.value, events_4$p.value, events_5$p.value)
+estimate_2 <- c(events_1_ef$estimate, events_2_ef$estimate, events_3_ef$estimate, events_4_ef$estimate, events_5_ef$estimate)
+statistic_2 <- c(events_1$statistic, events_2$statistic, events_3$statistic, events_4$statistic, events_5$statistic)
+parameter_2 <- c(events_1$parameter, events_2$parameter, events_3$parameter, events_4$parameter, events_5$parameter)
+
+#Table
+table_data_2 <- data.frame(
+  Condition = conditions_2,
+  "t" = statistic_2,
+  "df" = parameter_2,
+  "p" = p_values_2, 
+  "Hedges' g" = estimate_2)
+
+print(table_data_2)
+
+```
+```{r interesting events (self image)}
+#Interesting Events
+
+int_1 <- t.test(control_interesting$self_image_total, grat_list$self_image_total)
+int_1_ef <- effsize::cohen.d(control_interesting$self_image_total, grat_list$self_image_total, hedges.correction = TRUE)
+
+int_2 <- t.test(control_interesting$self_image_total, grat_letter$self_image_total)
+int_2_ef <- effsize::cohen.d(control_interesting$self_image_total, grat_letter$self_image_total, hedges.correction = TRUE)
+
+int_3 <- t.test(control_interesting$self_image_total, grat_text$self_image_total)
+int_3_ef <- effsize::cohen.d(control_interesting$self_image_total, grat_text$self_image_total, hedges.correction = TRUE)
+
+int_4 <- t.test(control_interesting$self_image_total, grat_hk$self_image_total)
+int_4_ef <- effsize::cohen.d(control_interesting$self_image_total, grat_hk$self_image_total, hedges.correction = TRUE)
+
+int_5 <- t.test(control_interesting$self_image_total, grat_sing$self_image_total)
+int_5_ef <- effsize::cohen.d(control_interesting$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_3 <- c(int_1$p.value, int_2$p.value, int_3$p.value, int_4$p.value, int_5$p.value)
+estimate_3 <- c(int_1_ef$estimate, int_2_ef$estimate, int_3_ef$estimate, int_4_ef$estimate, int_5_ef$estimate)
+statistic_3 <- c(int_1$statistic, int_2$statistic, int_3$statistic, int_4$statistic, int_5$statistic)
+parameter_3 <- c(int_1$parameter, int_2$parameter, int_3$parameter, int_4$parameter, int_5$parameter)
+
+#Table
+table_data_3 <- data.frame(
+  Condition = conditions_3,
+  "t" = statistic_3,
+  "df" = parameter_3,
+  "p" = p_values_3, 
+  "Hedges' g" = estimate_3)
+
+print(table_data_3)
+
+```
+```{r hassles (self image)}
+
+#Hassles
+
+hassles_1 <- t.test(control_hassles$self_image_total, grat_list$self_image_total)
+hassles_1_ef <- effsize::cohen.d(control_hassles$self_image_total, grat_list$self_image_total, hedges.correction = TRUE)
+
+hassles_2 <- t.test(control_hassles$self_image_total, grat_letter$self_image_total)
+hassles_2_ef <- effsize::cohen.d(control_hassles$self_image_total, grat_letter$self_image_total, hedges.correction = TRUE)
+
+hassles_3 <- t.test(control_hassles$self_image_total, grat_text$self_image_total)
+hassles_3_ef <- effsize::cohen.d(control_hassles$self_image_total, grat_text$self_image_total, hedges.correction = TRUE)
+
+hassles_4 <- t.test(control_hassles$self_image_total, grat_hk$self_image_total)
+hassles_4_ef <- effsize::cohen.d(control_hassles$self_image_total, grat_hk$self_image_total, hedges.correction = TRUE)
+
+hassles_5 <- t.test(control_hassles$self_image_total, grat_sing$self_image_total)
+hassles_5_ef <- effsize::cohen.d(control_hassles$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_4 <- c(hassles_1$p.value, hassles_2$p.value, hassles_3$p.value, hassles_4$p.value, hassles_5$p.value)
+estimate_4 <- c(hassles_1_ef$estimate, hassles_2_ef$estimate, hassles_3_ef$estimate, hassles_4_ef$estimate, hassles_5_ef$estimate)
+statistic_4 <- c(hassles_1$statistic, hassles_2$statistic, hassles_3$statistic, hassles_4$statistic, hassles_5$statistic)
+parameter_4 <- c(hassles_1$parameter, hassles_2$parameter, hassles_3$parameter, hassles_4$parameter, hassles_5$parameter)
+
+#Table
+table_data_4 <- data.frame(
+  Condition = conditions_4,
+  "t" = statistic_4,
+  "df" = parameter_4,
+  "p" = p_values_4, 
+  "Hedges' g" = estimate_4)
+
+print(table_data_4)
+
+```
+```{r gratitude conditions (self image)}
+
+grat_1 <- t.test(grat_list$self_image_total, grat_letter$self_image_total)
+grat_1_ef <- effsize::cohen.d(grat_list$self_image_total, grat_letter$self_image_total, hedges.correction = TRUE)
+
+grat_2 <- t.test(grat_list$self_image_total, grat_text$self_image_total)
+grat_2_ef <- effsize::cohen.d(grat_list$self_image_total, grat_text$self_image_total, hedges.correction = TRUE)
+
+grat_3 <- t.test(grat_list$self_image_total, grat_hk$self_image_total)
+grat_3_ef <- effsize::cohen.d(grat_list$self_image_total, grat_hk$self_image_total, hedges.correction = TRUE)
+
+grat_4 <- t.test(grat_list$self_image_total, grat_sing$self_image_total)
+grat_4_ef <- effsize::cohen.d(grat_list$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+grat_5 <- t.test(grat_letter$self_image_total, grat_text$self_image_total)
+grat_5_ef <- effsize::cohen.d(grat_letter$self_image_total, grat_text$self_image_total, hedges.correction = TRUE)
+
+grat_6 <- t.test(grat_letter$self_image_total, grat_hk$self_image_total)
+grat_6_ef <- effsize::cohen.d(grat_letter$self_image_total, grat_hk$self_image_total, hedges.correction = TRUE)
+
+grat_7 <- t.test(grat_letter$self_image_total, grat_sing$self_image_total)
+grat_7_ef <- effsize::cohen.d(grat_letter$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+grat_8 <- t.test(grat_text$self_image_total, grat_hk$self_image_total)
+grat_8_ef <- effsize::cohen.d(grat_text$self_image_total, grat_hk$self_image_total, hedges.correction = TRUE)
+
+grat_9 <- t.test(grat_text$self_image_total, grat_sing$self_image_total)
+grat_9_ef <- effsize::cohen.d(grat_text$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+grat_10 <- t.test(grat_hk$self_image_total, grat_sing$self_image_total)
+grat_10_ef <- effsize::cohen.d(grat_hk$self_image_total, grat_sing$self_image_total, hedges.correction = TRUE)
+
+#Table
+p_values_5 <- c(grat_1$p.value, grat_2$p.value, grat_3$p.value, grat_4$p.value, grat_5$p.value, grat_6$p.value, grat_7$p.value, grat_8$p.value, grat_9$p.value, grat_10$p.value)
+estimate_5 <- c(grat_1_ef$estimate, grat_2_ef$estimate, grat_3_ef$estimate, grat_4_ef$estimate, grat_5_ef$estimate, grat_6_ef$estimate, grat_7_ef$estimate, grat_8_ef$estimate, grat_9_ef$estimate, grat_10_ef$estimate)
+statistic_5 <- c(grat_1$statistic, grat_2$statistic, grat_3$statistic, grat_4$statistic, grat_5$statistic, grat_6$statistic, grat_7$statistic, grat_8$statistic, grat_9$statistic, grat_10$statistic)
+parameter_5 <- c(grat_1$parameter, grat_2$parameter, grat_3$parameter, grat_4$parameter, grat_5$parameter, grat_6$parameter, grat_7$parameter, grat_8$parameter, grat_9$parameter, grat_10$parameter)
+
+#Table
+table_data_5 <- data.frame(
+  Condition = conditions_5,
+  "t" = statistic_5,
+  "df" = parameter_5,
+  "p" = p_values_5, 
+  "Hedges' g" = estimate_5)
+
+print(table_data_5)
+
+```
+```{r control conditions (self image)}
+con_1 <- t.test(control$self_image_total, control_events$self_image_total)
+con_1_ef <- effsize::cohen.d(control$self_image_total, control_events$self_image_total, hedges.correction = TRUE)
+
+con_2 <- t.test(control$self_image_total, control_interesting$self_image_total)
+con_2_ef <- effsize::cohen.d(control$self_image_total, control_interesting$self_image_total, hedges.correction = TRUE)
+
+con_3 <- t.test(control$self_image_total, control_hassles$self_image_total)
+con_3_ef <- effsize::cohen.d(control$self_image_total, control_hassles$self_image_total, hedges.correction = TRUE)
+
+con_4 <- t.test(control_events$self_image_total, control_interesting$self_image_total)
+con_4_ef <- effsize::cohen.d(control_events$self_image_total, control_interesting$self_image_total, hedges.correction = TRUE)
+
+con_5 <- t.test(control_events$self_image_total, control_hassles$self_image_total)
+con_5_ef <- effsize::cohen.d(control_events$self_image_total, control_hassles$self_image_total, hedges.correction = TRUE)
+
+con_6 <- t.test(control_interesting$self_image_total, control_hassles$self_image_total)
+con_6_ef <- effsize::cohen.d(control_interesting$self_image_total, control_hassles$self_image_total, hedges.correction = TRUE)
+
+#Dataframe
+p_values_6 <- c(con_1$p.value, con_2$p.value, con_3$p.value, con_4$p.value, con_5$p.value, con_6$p.value)
+estimate_6 <- c(con_1_ef$estimate, con_2_ef$estimate, con_3_ef$estimate,
+                con_4_ef$estimate, con_5_ef$estimate, con_6_ef$estimate)
+statistic_6 <- c(con_1$statistic, con_2$statistic, con_3$statistic, 
+                 con_4$statistic, con_5$statistic, con_6$statistic)
+parameter_6 <- c(con_1$parameter, con_2$parameter, con_3$parameter, 
+                 con_4$parameter, con_5$parameter, con_6$parameter)
+
+#Table
+table_data_6 <- data.frame(
+  Condition = conditions_6,
+  "t" = statistic_6,
+  "df" = parameter_6,
+  "p" = p_values_6, 
+  "Hedges' g" = estimate_6)
+
+print(table_data_6)
+
+```
