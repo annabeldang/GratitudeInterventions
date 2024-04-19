@@ -8,23 +8,17 @@ date: "2024-04-10"
 ```{r libraries}
 
 library(ggplot2)
-install.packages("ggplot2")
-
 library(dplyr)
-install.packages("dplyr")
-
 library(patchwork)
-install.packages("patchwork")
-
 library(scales)
-install.packages("scales")
 
 ```
 
 ```{r categories}
 
+setwd("/Users/beheo/Documents/GitHub/GratitudeInterventions/Study 1 Code")
+
 #Set up
-setwd("/Users/beheo/Desktop/Gratitude Interventions Study/Study 1")
 
 study_1.1 <- read.csv("Gratitude_Interventions_Study_1.1.csv")
 study_1.1 <- study_1.1[study_1.1$Finished == 1, ]
@@ -52,6 +46,10 @@ data_temp1 <- bind_rows(study_1.1, study_1.2)
 data_temp2 <- bind_rows(data_temp1, study_1.3)
 data <- bind_rows(data_temp2, study_1.4)
 
+# process data
+data <- data %>%
+  # remove incomplete or test observations
+  filter(Finished != "0")
 ```
 
 ```{r set up}

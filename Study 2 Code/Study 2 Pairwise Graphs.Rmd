@@ -15,9 +15,6 @@ library(patchwork)
 library(scales)
 library(here)
 
-# specify directory structure
-i_am("code/Study 2 Pairwise Graph.Rmd")
-
 ```
 #Categories
 
