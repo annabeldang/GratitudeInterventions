@@ -38,7 +38,7 @@ DF <- fetch_survey(surveyID = 'SV_0rIOXQcp62uVzsq',
 # process data
 data <- DF %>%
   # remove incomplete or test observations
-  filter(Finished != "0")
+  filter(Finished != "0", condition !="NA")
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
@@ -58,9 +58,6 @@ data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signatu
 ```{r categories}
 #Conditions
 conditions <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")
-
-control_conditions <- subset(data, condition_type == 1)
-gratitude_conditions <- subset(data, condition_type == 2)
 
 control <- subset(data, condition == 1)
 control_events <- subset(data, condition == 2)

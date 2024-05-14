@@ -20,7 +20,8 @@ library(scales)
 ```{r categories}
 
 #Set up
-setwd("/Users/beheo/Documents/GitHub/GratitudeInterventions/Study 1 Code")
+path <- dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(path)
 
 #Set up
 
@@ -50,10 +51,9 @@ data_temp1 <- bind_rows(study_1.1, study_1.2)
 data_temp2 <- bind_rows(data_temp1, study_1.3)
 data <- bind_rows(data_temp2, study_1.4)
 
-# process data
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0")
+  filter(Finished != "0", condition !="NA")
 
 ```
 
@@ -71,24 +71,76 @@ data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
 
 ```
+```{r participant statistics}
+
+#Study 1.1
+study_1.1 <- study_1.1 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.1 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(study_1.1$age)
+sd(study_1.1$age)
+
+#Study 1.2
+study_1.2 <- study_1.2 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.2 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(study_1.2$age)
+sd(study_1.2$age)
+
+#Study 1.3
+study_1.3 <- study_1.3 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.3 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+study_1.3_filtered <- study_1.3 %>%
+  filter(ResponseId!= "R_1BQpilnhktdy8wz") #Participant incorrectly inputted birth year instead of age
+
+mean(study_1.3_filtered$age)
+sd(study_1.3_filtered$age)
+
+#Study 1.4
+
+study_1.4 <- study_1.4 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.4 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(study_1.4$age)
+sd(study_1.4$age)
+```
 
 ```{r categories}
 
 #Conditions
-control_conditions <- subset(data, condition_type == 1)
-gratitude_conditions <- subset(data, condition_type == 2)
-
-control <- subset(data, condition == 1)
-control_events <- subset(data, condition == 2)
-control_interesting <- subset(data, condition == 3)
-control_hassles <- subset(data, condition == 4)
-
-grat_list <- subset(data, condition == 5)
-grat_letter <- subset(data, condition == 6)
-grat_text <- subset(data, condition == 7)
-grat_hk <- subset(data, condition == 8)
-grat_sing <- subset(data, condition == 9)
-knitr::opts_chunk$set(echo = TRUE)
 
 condition_color <- c(
     "1" = "indianred",
