@@ -220,9 +220,9 @@ happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color 
   geom_errorbar(aes(ymin = happy_mean - happy_se, ymax = happy_mean + happy_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Positive Affect (PA)",
-       x = "Mean Gratitude",
-       y = "Mean PA") +
+  labs(title = "Study 1",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported PA") +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5),  
@@ -272,7 +272,7 @@ optimistic_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = optimistic_me
   geom_errorbar(aes(ymin = optimistic_mean - optimistic_se, ymax = optimistic_mean + optimistic_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Optimism",
+  labs(title = "Study 1",
        x = "Mean Gratitude",
        y = "Mean Optimism") +
   theme_minimal() +
@@ -325,9 +325,9 @@ sad_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sad_mean, color = co
   geom_errorbar(aes(ymin = sad_mean - sad_se, ymax = sad_mean + sad_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Negative Affect (NA)",
-       x = "Mean Gratitude",
-       y = "Mean NA") +
+  labs(title = "Study 1",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported NA") +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5),
@@ -377,7 +377,7 @@ indebted_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = indebted_mean, 
   geom_errorbar(aes(ymin = indebted_mean - indebted_se, ymax = indebted_mean + indebted_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Indebtedness",
+  labs(title = "Study 1",
        x = "Mean Gratitude",
        y = "Mean Indebtedness") +
   theme_minimal() +
@@ -429,7 +429,7 @@ guilty_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = guilty_mean, colo
   geom_errorbar(aes(ymin = guilty_mean - guilty_se, ymax = guilty_mean + guilty_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Guilt",
+  labs(title = "Study 1",
        x = "Mean Gratitude",
        y = "Mean Guilt") +
   theme_minimal() +
@@ -483,9 +483,9 @@ ls_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ls_mean, color = cond
   geom_errorbar(aes(ymin = ls_mean - ls_se, ymax = ls_mean + ls_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Life Satisfaction",
-       x = "Mean Gratitude",
-       y = "Mean Satisfaction") +
+  labs(title = "Study 1",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported Life Satisfaction") +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5),
@@ -535,7 +535,7 @@ sc_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sc_mean, color = cond
   geom_errorbar(aes(ymin = sc_mean - sc_se, ymax = sc_mean + sc_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Social Connection",
+  labs(title = "Study 1",
        x = "Mean Gratitude",
        y = "Mean Social Connection") +
   theme_minimal() +
@@ -587,7 +587,7 @@ ladder_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ladder_mean, colo
   geom_errorbar(aes(ymin = ladder_mean - ladder_se, ymax = ladder_mean + ladder_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
-  labs(title = "Attitude Towards Life",
+  labs(title = "Study 1",
        x = "Mean Gratitude",
        y = "Mean Attitude Towards Life") +
   theme_minimal() +
@@ -640,7 +640,7 @@ self_image_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = self_image_me
   geom_errorbar(aes(ymin = self_image_mean - self_image_se, ymax = self_image_mean + self_image_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +  # Assign specific colors
-  labs(title = "Percieved Self Image",
+  labs(title = "Study 1",
        x = "Mean Gratitude",
        y = "Mean Percieved Self Image") +
   theme_minimal() +
