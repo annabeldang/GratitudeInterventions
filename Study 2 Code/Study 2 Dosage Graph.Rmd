@@ -13,6 +13,7 @@ library(ggplot2)
 library(dplyr)
 library(patchwork)
 library(scales)
+library(qualtRics)
 
 ```
 
@@ -142,15 +143,15 @@ happy_model <- model <- lm(gratitude_mean ~ happy_mean, data = dosage_data)
 print(happy_model)
 
 # Create scatter plot with linear regression line
-happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color = condition)) +
+happy_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = happy_mean - happy_se, ymax = happy_mean + happy_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +  # Assign specific colors
-  labs(title = "Positive Affect (PA)",
-       x = "Mean Gratitude",
-       y = "Mean PA") +
+  labs(title = "Study 2",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported PA") +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5),  # Center the plot title
@@ -160,7 +161,7 @@ happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color 
   )
 
 # Print the plot
-print(happy_plot)
+print(happy_plot_2)
 ```
 ```{r optimism}
 
@@ -189,7 +190,7 @@ dosage_data <- data.frame(
 dosage_data$condition <- factor(dosage_data$condition)
 
 # Create scatter plot with linear regression line
-optimistic_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = optimistic_mean, color = condition)) +
+optimistic_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = optimistic_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = optimistic_mean - optimistic_se, ymax = optimistic_mean + optimistic_se), width = 0.1) +
@@ -207,7 +208,7 @@ optimistic_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = optimistic_me
   )
 
 # Print the plot
-print(optimistic_plot)
+print(optimistic_plot_2)
 ```
 ```{r sad}
 
@@ -236,15 +237,15 @@ dosage_data <- data.frame(
 dosage_data$condition <- factor(dosage_data$condition)
 
 # Create scatter plot with linear regression line
-sad_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sad_mean, color = condition)) +
+sad_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = sad_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = sad_mean - sad_se, ymax = sad_mean + sad_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +  # Assign specific colors
-  labs(title = "Negative Affect (NA)",
-       x = "Mean Gratitude",
-       y = "Mean NA") +
+  labs(title = "Study 2",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported NA") +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5),  # Center the plot title
@@ -256,7 +257,7 @@ sad_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sad_mean, color = co
   
 
 # Print the plot
-print(sad_plot)
+print(sad_plot_2)
 ```
 ```{r indebted}
 indebted_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(indebted_all)) 
@@ -284,7 +285,7 @@ dosage_data <- data.frame(
 dosage_data$condition <- factor(dosage_data$condition)
 
 # Create scatter plot with linear regression line
-indebted_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = indebted_mean, color = condition)) +
+indebted_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = indebted_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = indebted_mean - indebted_se, ymax = indebted_mean + indebted_se), width = 0.1) +
@@ -302,7 +303,7 @@ indebted_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = indebted_mean, 
   )
 
 # Print the plot
-print(indebted_plot)
+print(indebted_plot_2)
 ```
 ```{r guilt}
 
@@ -331,7 +332,7 @@ dosage_data <- data.frame(
 dosage_data$condition <- factor(dosage_data$condition)
 
 # Create scatter plot with linear regression line
-guilty_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = guilty_mean, color = condition)) +
+guilty_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = guilty_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = guilty_mean - guilty_se, ymax = guilty_mean + guilty_se), width = 0.1) +
@@ -349,7 +350,7 @@ guilty_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = guilty_mean, colo
   )
 
 # Print the plot
-print(guilty_plot)
+print(guilty_plot_2)
 ```
 ```{r envy}
 
@@ -378,7 +379,7 @@ dosage_data <- data.frame(
 dosage_data$condition <- factor(dosage_data$condition)
 
 # Create scatter plot with linear regression line
-envy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = envy_mean, color = condition)) +
+envy_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = envy_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = envy_mean - envy_se, ymax = envy_mean + envy_se), width = 0.1) +
@@ -396,7 +397,7 @@ envy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = envy_mean, color = 
   )
 
 # Print the plot
-print(envy_plot)
+print(envy_plot_2)
 ```
 
 ```{r life satisfaction}
@@ -426,15 +427,15 @@ dosage_data <- data.frame(
 dosage_data$condition <- factor(dosage_data$condition)
 
 # Create scatter plot with linear regression line
-ls_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ls_mean, color = condition)) +
+ls_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = ls_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = ls_mean - ls_se, ymax = ls_mean + ls_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +  # Assign specific colors
-  labs(title = "Life Satisfaction",
-       x = "Mean Gratitude",
-       y = "Mean Satisfaction") +
+  labs(title = "Study 2",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported LifeSatisfaction") +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5),  # Center the plot title
@@ -444,7 +445,7 @@ ls_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ls_mean, color = cond
   )
 
 # Print the plot
-print(ls_plot)
+print(ls_plot_2)
 ```
 ```{r social connection}
 
@@ -473,7 +474,7 @@ dosage_data <- data.frame(
 dosage_data$condition <- factor(dosage_data$condition)
 
 # Create scatter plot with linear regression line
-sc_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sc_mean, color = condition)) +
+sc_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = sc_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = sc_mean - sc_se, ymax = sc_mean + sc_se), width = 0.1) +
@@ -491,7 +492,7 @@ sc_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sc_mean, color = cond
   )
 
 # Print the plot
-print(sc_plot)
+print(sc_plot_2)
 ```
 ```{r percieved self image}
 
@@ -519,8 +520,8 @@ dosage_data <- data.frame(
 
 dosage_data$condition <- factor(dosage_data$condition)
 
-# Create self_imageatter plot with linear regression line
-self_image_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = self_image_mean, color = condition)) +
+# Create scatter plot with linear regression line
+self_image_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = self_image_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = self_image_mean - self_image_se, ymax = self_image_mean + self_image_se), width = 0.1) +
@@ -538,7 +539,7 @@ self_image_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = self_image_me
   )
 
 # Print the plot
-print(self_image_plot)
+print(self_image_plot_2)
 ```
 ```{r ladder}
 
@@ -566,8 +567,8 @@ dosage_data <- data.frame(
 
 dosage_data$condition <- factor(dosage_data$condition)
 
-# Create self_imageatter plot with linear regression line
-ladder_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ladder_mean, color = condition)) +
+# Create scatter plot with linear regression line
+ladder_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = ladder_mean, color = condition)) +
   geom_point(size = 2) +
   geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
   geom_errorbar(aes(ymin = ladder_mean - ladder_se, ymax = ladder_mean + ladder_se), width = 0.1) +
@@ -585,7 +586,7 @@ ladder_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ladder_mean, colo
   )
 
 # Print the plot
-print(ladder_plot)
+print(ladder_plot_2)
 ```
 
 #Combined Graphs
@@ -597,20 +598,38 @@ theme_settings <- list(
 )
 
 # Combine the plots with adjusted theme settings
-combined_plots <- (
-  (optimistic_plot + theme_settings + theme(legend.position = "none")) +
-  (happy_plot + theme_settings + theme(legend.position = "none")) +
-  (sad_plot + theme_settings + theme(legend.position = "none")) +
-  (ls_plot + theme_settings + theme(legend.position = "right"))
+combined_plot <- (
+  (optimistic_plot_2 + theme_settings + theme(legend.position = "none")) +
+  (happy_plot_2 + theme_settings + theme(legend.position = "none")) +
+  (sad_plot_2 + theme_settings + theme(legend.position = "none")) +
+  (ls_plot_2 + theme_settings + theme(legend.position = "right"))
 ) + plot_layout(guides = "collect")  # Collect legends into one
 
 # Set the size of the plot
 options(repr.plot.width = 15, repr.plot.height = 13)  # Adjust width and height as needed
 
 # Print the combined plot
-print(combined_plots)
+print(combined_plot)
 
+```
+```{r paper figures}
+#PA
+combined_plot_happy <- happy_plot + theme_settings + theme(legend.position = "none") +
+  happy_plot_2 + theme_settings + theme(legend.position = "right")
 
+print(combined_plot_happy)
+
+#NA
+combined_plot_sad <- sad_plot + theme_settings + theme(legend.position = "none") +
+  sad_plot_2 + theme_settings + theme(legend.position = "right")
+
+print(combined_plot_sad)
+
+#Life Satisfaction
+combined_plot_ls <- ls_plot + theme_settings + theme(legend.position = "none") +
+  ls_plot_2 + theme_settings + theme(legend.position = "right")
+
+print(combined_plot_ls)
 
 ```
 

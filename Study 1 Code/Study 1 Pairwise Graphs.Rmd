@@ -52,10 +52,6 @@ data <- data %>%
   # remove incomplete or test observations
   filter(Finished != "0", condition !="NA")
 
-```
-
-```{r set up}
-
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
 data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
@@ -67,8 +63,8 @@ data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.
 data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
 
-```
 
+```
 ```{r categories}
 conditions <- c("1", "2", "3", "4", "5", "6", "7", "8", "9")
 
@@ -163,10 +159,9 @@ gratitude_graph <- ggplot(gratitude_data, aes(x = ordered_condition_name, y = gr
   geom_errorbar(aes(ymin = gratitude_mean - gratitude_se, 
                     ymax = gratitude_mean + gratitude_se),
                 width = 0.2, position = position_dodge(0.9)) + 
-  geom_line(aes(y = gratitude_scaled_effect_sizes), color = "red") +
   labs(x = "Conditions",
        y = "Mean Self-Reported Gratitude",
-       title = "Mean Gratitude across Conditions") +
+       title = "Study 1") +
   ylim(-0.5, 1.5) + 
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5),
@@ -299,10 +294,9 @@ happy_graph <- ggplot(happy_data, aes(x = ordered_condition_name, y = happy_mean
   geom_errorbar(aes(ymin = happy_mean - happy_se, 
                     ymax = happy_mean + happy_se),
                 width = 0.2, position = position_dodge(0.9)) + 
-  geom_line(aes(y = happy_scaled_effect_sizes), color = "red") +  # Line for effect sizes
   labs(x = "Conditions",
        y = "Mean Self-Reported PA",
-       title = "Mean PA across Conditions") +
+       title = "Study 1") +
   ylim(-0.5, 2) + 
   theme_minimal() +
    theme(plot.title = element_text(hjust = 0.5),
@@ -436,10 +430,9 @@ sad_graph <- ggplot(sad_data, aes(x = ordered_condition_name, y = sad_mean, fill
   geom_errorbar(aes(ymin = sad_mean - sad_se, 
                     ymax = sad_mean + sad_se),
                 width = 0.2, position = position_dodge(0.9)) + 
-  geom_line(aes(y = sad_scaled_effect_sizes), color = "red") +  # Line for effect sizes
   labs(x = "Conditions",
        y = "Mean Self-Reported NA",
-       title = "Mean NA across Conditions") +
+       title = "Study 1") +
   ylim(-0.5, 2) + 
   theme_minimal() +
     theme(plot.title = element_text(hjust = 0.5),
@@ -561,10 +554,9 @@ ls_graph <- ggplot(ls_data, aes(x = ordered_condition_name, y = ls_mean, fill = 
   geom_errorbar(aes(ymin = ls_mean - ls_se, 
                     ymax = ls_mean + ls_se),
                 width = 0.2, position = position_dodge(0.9)) + 
-  geom_line(aes(y = ls_scaled_effect_sizes), color = "red") +  # Line for effect sizes
   labs(x = "Conditions",
        y = "Mean Self-Reported Life Satisfaction",
-       title = "Mean Life Satisfaction across Conditions") +
+       title = "Study 1") +
   ylim(-0.5, 2) + 
   theme_minimal() +
     theme(plot.title = element_text(hjust = 0.5),
