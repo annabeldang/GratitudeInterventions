@@ -94,7 +94,6 @@ m <- lm(grat ~ condition_type * study,
 
 anova(m)
 
-
 library(emmeans)
 emmeans(m,
         pairwise ~ condition_type | study)
