@@ -114,7 +114,7 @@ gratitude_data <- data.frame(
 # Assign ordered condition titles, colors, and names
 gratitude_data <- gratitude_data %>%
   mutate(condition_color = case_when(
-    condition == "1" ~ "indianred",
+    condition == "1" ~ "white",
     condition == "2" ~ "lightsalmon",
     condition == "3" ~ "lightgoldenrod",
     condition == "4" ~ "palegreen2",
@@ -173,7 +173,8 @@ gratitude_graph <- ggplot(gratitude_data, aes(x = ordered_condition_name, y = gr
         axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(gratitude_data$condition_color),
                     labels = unique(gratitude_data$ordered_condition_name)) +
-  guides(fill = guide_legend(title = "Condition")) +
+  guides(fill = guide_legend(title = "Condition",                              
+                             override.aes = list(color = "black", size = 1))) +
   scale_y_continuous(labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1),
                      sec.axis = sec_axis(~ rescale(., from = gratitude_y_range, to = gratitude_effect_size_range), name = "Effect Size", labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1))) +
   geom_segment(aes(x = 0.5, xend = 1.4, y = 2.0, yend = 2.0), color = "black", size = 0.5) + 
@@ -249,7 +250,7 @@ happy_data <- data.frame(
 # Assign ordered condition titles, colors, and names
 happy_data <- happy_data %>%
   mutate(condition_color = case_when(
-    condition == "1" ~ "indianred",
+    condition == "1" ~ "white",
     condition == "2" ~ "lightsalmon",
     condition == "3" ~ "lightgoldenrod",
     condition == "4" ~ "palegreen2",
@@ -308,7 +309,7 @@ happy_graph <- ggplot(happy_data, aes(x = ordered_condition_name, y = happy_mean
         axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(happy_data$condition_color),
                     labels = unique(happy_data$ordered_condition_name)) +
-  guides(fill = guide_legend(title = "Condition")) +
+  guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
   scale_y_continuous(labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1),
                      sec.axis = sec_axis(~ rescale(., from = happy_y_range, to = happy_effect_size_range),
                                          name = "Effect Size",  
@@ -385,7 +386,7 @@ sad_data <- data.frame(
 # Assign ordered condition titles, colors, and names
 sad_data <- sad_data %>%
   mutate(condition_color = case_when(
-    condition == "1" ~ "indianred",
+    condition == "1" ~ "white",
     condition == "2" ~ "lightsalmon",
     condition == "3" ~ "lightgoldenrod",
     condition == "4" ~ "palegreen2",
@@ -444,7 +445,7 @@ sad_graph <- ggplot(sad_data, aes(x = ordered_condition_name, y = sad_mean, fill
         axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(sad_data$condition_color),
                     labels = unique(sad_data$ordered_condition_name)) +
-  guides(fill = guide_legend(title = "Condition")) +
+  guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
   scale_y_continuous(sec.axis = sec_axis(~ rescale(.,from = sad_y_range,to = sad_effect_size_range), name = "Effect Size", labels = scales::number_format(accuracy = 0.1))) +
   
   geom_segment(aes(x = 0.5, xend = 5.5, y = 0.55, yend = 0.55), color = "black", size = 0.5) +
@@ -509,7 +510,7 @@ ls_data <- data.frame(
 # Assign ordered condition titles, colors, and names
 ls_data <- ls_data %>%
   mutate(condition_color = case_when(
-    condition == "1" ~ "indianred",
+    condition == "1" ~ "white",
     condition == "2" ~ "lightsalmon",
     condition == "3" ~ "lightgoldenrod",
     condition == "4" ~ "palegreen2",
@@ -568,7 +569,7 @@ ls_graph <- ggplot(ls_data, aes(x = ordered_condition_name, y = ls_mean, fill = 
         axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(ls_data$condition_color),
                     labels = unique(ls_data$ordered_condition_name)) +
-  guides(fill = guide_legend(title = "Condition")) +
+  guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
   scale_y_continuous(sec.axis = sec_axis(~ rescale(.,from = ls_y_range,to = ls_effect_size_range), name = "Effect Size",  labels = scales::number_format(accuracy = 0.1))) +
   
   geom_segment(aes(x = 0.5, xend = 1.5, y = 0.55, yend = 0.55), color = "black", size = 0.5) +

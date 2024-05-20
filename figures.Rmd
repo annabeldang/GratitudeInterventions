@@ -1,0 +1,86 @@
+---
+title: "Untitled"
+author: "Annabel Dang"
+date: "2024-05-15"
+output: html_document
+---
+```{r}
+library(ggtext)
+
+```
+
+```{r gratitude}
+# Set theme settings for larger plots and smaller titles
+theme_settings <- list(
+  plot.title = theme(text = element_text(size = 8, face = "bold")),  # Adjust title size
+  axis.title = theme(text = element_text(size = 6))    # Adjust axis title size
+)
+
+combined_graph_gratitude <- gratitude_graph + theme_settings + theme(legend.position = "none") +
+  annotate("text", x = -Inf, y = Inf, label = "A.", vjust = 1, hjust = -0.4, 
+           family = "sans", fontface = "bold") +
+  gratitude_graph_2 + theme_settings + theme(legend.position = "right") +
+  annotate("text", x = -Inf, y = Inf, label = "B.", vjust = 1, hjust = -0.4,
+           family = "sans", fontface = "bold")
+
+print (combined_graph_gratitude)
+
+```
+```{r pa}
+combined_graph_happy <- happy_graph + theme_settings + theme(legend.position = "none") +
+  annotate("text", x = -Inf, y = Inf, label = "A.", vjust = 1, hjust = -0.4, 
+           family = "sans", fontface = "bold") +
+  happy_graph_2 + theme_settings + theme(legend.position = "right") +
+  annotate("text", x = -Inf, y = Inf, label = "B.", vjust = 1, hjust = -0.4,
+           family = "sans", fontface = "bold")
+
+ combined_plot_happy <- happy_plot + theme_settings + theme(legend.position = "none") +
+  annotate("text", x = -Inf, y = Inf, label = "C.", vjust = 1, hjust = -0.4, 
+           family = "sans", fontface = "bold") +
+  happy_plot_2 + theme_settings + theme(legend.position = "right") +
+  annotate("text", x = -Inf, y = Inf, label = "D.", vjust = 1, hjust = -0.4,
+           family = "sans", fontface = "bold")
+
+print (combined_graph_happy)
+print (combined_plot_happy)
+
+```
+```{r na}
+combined_graph_sad <- sad_graph + theme_settings + theme(legend.position = "none") +
+  annotate("text", x = -Inf, y = Inf, label = "A.", vjust = 1, hjust = -0.4, 
+           family = "sans", fontface = "bold") +
+  sad_graph_2 + theme_settings + theme(legend.position = "right") +
+  annotate("text", x = -Inf, y = Inf, label = "B.", vjust = 1, hjust = -0.4,
+           family = "sans", fontface = "bold")
+
+ combined_plot_sad <- sad_plot + theme_settings + theme(legend.position = "none") +
+  annotate("text", x = -Inf, y = Inf, label = "C.", vjust = 1, hjust = -0.4, 
+           family = "sans", fontface = "bold") +
+  sad_plot_2 + theme_settings + theme(legend.position = "right") +
+  annotate("text", x = -Inf, y = Inf, label = "D.", vjust = 1, hjust = -0.4,
+           family = "sans", fontface = "bold")
+
+print (combined_graph_sad)
+print (combined_plot_sad)
+
+```
+
+```{r ls}
+combined_graph_ls <- ls_graph + theme_settings + theme(legend.position = "none") +
+  annotate("text", x = -Inf, y = Inf, label = "A.", vjust = 1, hjust = -0.4, 
+           family = "sans", fontface = "bold") +
+  ls_graph_2 + theme_settings + theme(legend.position = "right") +
+  annotate("text", x = -Inf, y = Inf, label = "B.", vjust = 1, hjust = -0.4,
+           family = "sans", fontface = "bold")
+
+ combined_plot_ls <- ls_plot + theme_settings + theme(legend.position = "none") +
+  annotate("text", x = -Inf, y = Inf, label = "C.", vjust = 1, hjust = -0.4, 
+           family = "sans", fontface = "bold") +
+  ls_plot_2 + theme_settings + theme(legend.position = "right") +
+  annotate("text", x = -Inf, y = Inf, label = "D.", vjust = 1, hjust = -0.4,
+           family = "sans", fontface = "bold")
+
+print (combined_graph_ls)
+print (combined_plot_ls)
+
+```

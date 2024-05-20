@@ -1,0 +1,530 @@
+---
+---
+title: "Gratitude Interventions Study 1 Dosage Graphs"
+author: "Annabel Dang"
+date: "2024-04-10"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r libraries}
+
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(scales)
+install.packages("ggpmisc")
+library(ggpmisc)
+
+
+```
+
+```{r categories}
+
+#Set up
+path <- dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(path)
+
+#Set up
+
+study_1.1 <- read.csv("Gratitude_Interventions_Study_1.1.csv")
+study_1.1 <- study_1.1[study_1.1$Finished == 1, ]
+
+study_1.2 <- read.csv("Gratitude_Interventions_Study_1.2.csv")
+study_1.2 <- study_1.2[study_1.2$Finished == 1, ]
+
+study_1.3 <- read.csv("Gratitude_Interventions_Study_1.3.csv")
+study_1.3 <- study_1.3[study_1.3$Finished == 1, ]
+study_1.3$race_2 <- as.numeric(study_1.3$race_2)
+
+study_1.4 <- read.csv("Gratitude_Interventions_Study_1.4.csv")
+study_1.4 <- study_1.4[study_1.4$Finished == 1, ]
+study_1.4$race_2 <- as.numeric(study_1.4$race_2)
+
+# File paths
+file_paths <- c("Gratitude_Interventions_Study_1.1.csv",
+                "Gratitude_Interventions_Study_1.2.csv",
+                "Gratitude_Interventions_Study_1.3.csv",
+                "Gratitude_Interventions_Study_1.4.csv")
+
+# Read and combine the CSV files
+data <- lapply(file_paths, read.csv)
+data_temp1 <- bind_rows(study_1.1, study_1.2)
+data_temp2 <- bind_rows(data_temp1, study_1.3)
+data <- bind_rows(data_temp2, study_1.4)
+
+data <- data %>%
+  # remove incomplete or test observations
+  filter(Finished != "0", condition !="NA")
+
+```
+
+```{r set up}
+
+data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
+data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
+data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
+data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious", "nervous")], na.rm = TRUE)
+data$indebted_all <- rowMeans(data[, c("indebted", "obligated")], na.rm = TRUE)
+data$envy_all <- rowMeans(data[, c("envious", "bitter", "jealous")], na.rm = TRUE)
+
+data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
+data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
+data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+
+```
+```{r participant statistics}
+
+#Study 1.1
+study_1.1 <- study_1.1 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.1 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(study_1.1$age)
+sd(study_1.1$age)
+
+#Study 1.2
+study_1.2 <- study_1.2 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.2 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(study_1.2$age)
+sd(study_1.2$age)
+
+#Study 1.3
+study_1.3 <- study_1.3 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.3 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+study_1.3_filtered <- study_1.3 %>%
+  filter(ResponseId!= "R_1BQpilnhktdy8wz") #Participant incorrectly inputted birth year instead of age
+
+mean(study_1.3_filtered$age)
+sd(study_1.3_filtered$age)
+
+#Study 1.4
+
+study_1.4 <- study_1.4 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+study_1.4 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(study_1.4$age)
+sd(study_1.4$age)
+```
+
+```{r categories}
+
+#Conditions
+
+condition_color <- c(
+    "1" = "indianred",
+    "2" = "lightsalmon",
+    "3" = "lightgoldenrod",
+    "4" = "palegreen2",
+    "5" = "deepskyblue2",
+    "6" = "orchid",
+    "7" = "tan",
+    "8" = "lightblue",
+    "9" = "lightpink")
+
+condition_name <- c(
+    "1" = "Measurement Only",
+    "2" = "Events List",
+    "3" = "Interesting Events List",
+    "4" = "Hassles List",
+    "5" = "Gratitude List",
+    "6" = "Gratitude Letter",
+    "7" = "Gratitude Text",
+    "8" = "Chan Gratitude List",
+    "9" = "Mental Subtraction Task")
+
+#Standard Error
+calculate_std_error <- function(condition_data)
+  return(sd(condition_data) / sqrt(length(condition_data)))
+
+```
+
+```{r gratitude}
+
+#Calculate mean for 'gratitude_all' by 'condition'
+cond.means_1 <-data%>%group_by(condition)%>%summarize(Mean=mean(gratitude_all)) 
+print(cond.means_1)
+
+#Calculate mean for 'gratitude_all' by 'condition' and subtract the mean of measurement only control
+cond.means_1 <- data %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(gratitude_all)) %>%
+  mutate(Mean = Mean - 4.27)
+
+```
+```{r optimism}
+#Calculate mean for 'optimistic_all' by 'condition'
+optimistic_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(optimistic_all)) 
+print(optimistic_mean)
+
+#Calculate mean for 'optimistic_all' by 'condition' and subtract the mean of measurement only control
+cond.means_2 <- data %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(optimistic_all)) %>%
+  mutate(Mean = Mean - 4.13)
+
+#Calculate standard error for 'optimistic_all' by 'condition'
+std_errors <- data %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(optimistic_all) / sqrt(n()))
+
+#Create new dataframe
+dosage_data <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  optimistic_mean = cond.means_2$Mean,
+  optimistic_se = std_errors$Standard_Error
+)
+
+dosage_data$condition <- factor(dosage_data$condition)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ optimistic_mean, data = dosage_data)
+summary(lm_model)
+
+# Create scatter plot with linear regression line
+optimistic_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = optimistic_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_errorbar(aes(ymin = optimistic_mean - optimistic_se, ymax = optimistic_mean + optimistic_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 1",
+       x = "Mean Gratitude",
+       y = "Mean Optimism") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),  
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# Print the plot
+print(optimistic_plot)
+
+```
+```{r indebted}
+# Calculate mean for 'indebted_all' by 'condition'
+indebted_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(indebted_all)) 
+print(indebted_mean)
+
+# Calculate mean for 'indebted_all' by 'condition' and subtract the mean of measurement only control
+cond.means_2 <- data %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(indebted_all)) %>%
+  mutate(Mean = Mean - 2.82)
+
+# Calculate standard error for 'indebted_all' by 'condition'
+std_errors <- data %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(indebted_all) / sqrt(n()))
+
+# Create new dataframe
+dosage_data <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  indebted_mean = cond.means_2$Mean,
+  indebted_se = std_errors$Standard_Error
+)
+
+dosage_data$condition <- factor(dosage_data$condition)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ indebted_mean, data = dosage_data)
+summary(lm_model)
+
+# Create scatter plot with linear regression line
+indebted_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = indebted_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_errorbar(aes(ymin = indebted_mean - indebted_se, ymax = indebted_mean + indebted_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 1",
+       x = "Mean Gratitude",
+       y = "Mean Indebtedness") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# Print the plot
+print(indebted_plot)
+```
+```{r guilt}
+
+# Calculate mean for 'guilty' by 'condition' 
+guilty_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(guilty)) 
+print(guilty_mean)
+
+# Calculate mean for 'guilty' by 'condition' and subtract the mean of measurement only control
+cond.means_2 <- data %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(guilty)) %>%
+  mutate(Mean = Mean - 1.95)
+
+# Calculate standard error for 'guilty' by 'condition'
+std_errors <- data %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(guilty) / sqrt(n()))
+
+# Create new dataframe
+dosage_data <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  guilty_mean = cond.means_2$Mean,
+  guilty_se = std_errors$Standard_Error
+)
+
+dosage_data$condition <- factor(dosage_data$condition)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ guilty_mean, data = dosage_data)
+summary(lm_model)
+
+# Create scatter plot with linear regression line
+guilty_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = guilty_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_errorbar(aes(ymin = guilty_mean - guilty_se, ymax = guilty_mean + guilty_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 1",
+       x = "Mean Gratitude",
+       y = "Mean Guilt") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# Print the plot
+print(guilty_plot)
+
+```
+```{r social connection}
+# Calculate mean for 'sc_total' by 'condition'
+sc_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(sc_total)) 
+print(sc_mean)
+
+# Calculate mean for 'sc_total' by 'condition' and subtract the mean of measurement only control
+cond.means_2 <- data %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(sc_total)) %>%
+  mutate(Mean = Mean - 3.86)
+
+# Calculate standard error for 'sc_total' by 'condition'
+std_errors <- data %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(sc_total) / sqrt(n()))
+
+# Create new dataframe
+dosage_data <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  sc_mean = cond.means_2$Mean,
+  sc_se = std_errors$Standard_Error
+)
+
+dosage_data$condition <- factor(dosage_data$condition)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ sc_mean, data = dosage_data)
+summary(lm_model)
+
+# Create scatter plot with linear regression line
+sc_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sc_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_errorbar(aes(ymin = sc_mean - sc_se, ymax = sc_mean + sc_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 1",
+       x = "Mean Gratitude",
+       y = "Mean Social Connection") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# Print the plot
+print(sc_plot)
+```
+```{r ladder}
+
+# Calculate mean for 'ladder' by 'condition'
+ladder_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(ladder)) 
+print(ladder_mean)
+
+# Calculate mean for 'ladder' by 'condition' and subtract the mean of measurement only control
+cond.means_2 <- data %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(ladder)) %>%
+  mutate(Mean = Mean - 5.9)
+
+# Calculate standard error for 'ladder' by 'condition'
+std_errors <- data %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(ladder) / sqrt(n()))
+
+# Create new dataframe
+dosage_data <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  ladder_mean = cond.means_2$Mean,
+  ladder_se = std_errors$Standard_Error
+)
+
+dosage_data$condition <- factor(dosage_data$condition)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ ladder_mean, data = dosage_data)
+summary(lm_model)
+
+# Create scatter plot with linear regression line
+ladder_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ladder_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_errorbar(aes(ymin = ladder_mean - ladder_se, ymax = ladder_mean + ladder_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 1",
+       x = "Mean Gratitude",
+       y = "Mean Attitude Towards Life") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1))
+
+# Print the plot
+print(ladder_plot)
+```
+```{r percieved self image}
+
+# Calculate mean for 'self_image_total' by 'condition'
+self_image_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(self_image_total)) 
+print(self_image_mean)
+
+# Calculate mean for 'self_image_total' by 'condition' and subtract the mean of measurement only control
+cond.means_2 <- data %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(self_image_total)) %>%
+  mutate(Mean = Mean - 3.66)
+
+# Calculate standard error for 'self_image_total' by 'condition'
+std_errors <- data %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(self_image_total) / sqrt(n()))
+
+# Create new dataframe
+dosage_data <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  self_image_mean = cond.means_2$Mean,
+  self_image_se = std_errors$Standard_Error
+)
+
+dosage_data$condition <- factor(dosage_data$condition)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ self_image_mean, data = dosage_data)
+summary(lm_model)
+
+# Create scatter plot with linear regression line
+self_image_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = self_image_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_errorbar(aes(ymin = self_image_mean - self_image_se, ymax = self_image_mean + self_image_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +  # Assign specific colors
+  labs(title = "Study 1",
+       x = "Mean Gratitude",
+       y = "Mean Percieved Self Image") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),  # Center the plot title
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()# Set background color to white
+  )
+
+# Print the plot
+print(self_image_plot)
+```
+
+#Combined Graphs
+```{r combined graph}
+# Set theme settings
+theme_settings <- list(
+  plot.title = theme(text = element_text(size = 8, face = "bold")),
+  axis.title = theme(text = element_text(size = 6)) 
+)
+
+# Combine the plots
+combined_plots <- (
+  (optimistic_plot + theme_settings + theme(legend.position = "none")) +
+  (indebted_plot + theme_settings + theme(legend.position = "none")) +
+  (guilty_plot + theme_settings + theme(legend.position = "none")) +
+) + plot_layout(guides = "collect")
+
+combined_plots_2 <- (
+  (sc_plot + theme_settings + theme(legend.position = "none")) +
+  (ladder_plot + theme_settings + theme(legend.position = "none")) +
+  (self_image_plot + theme_settings + theme(legend.position = "right"))
+) + plot_layout(guides = "collect") 
+
+# Set the size of the plot
+options(repr.plot.width = 15, repr.plot.height = 13)
+
+# Print the combined plot
+print(combined_plots)
+print(combined_plots_2)
+
+```
