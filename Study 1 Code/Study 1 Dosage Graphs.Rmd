@@ -63,7 +63,7 @@ data <- data %>%
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
 data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
-data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious", "nervous")], na.rm = TRUE)
+data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious")], na.rm = TRUE)
 data$indebted_all <- rowMeans(data[, c("indebted", "obligated")], na.rm = TRUE)
 data$envy_all <- rowMeans(data[, c("envious", "bitter", "jealous")], na.rm = TRUE)
 
@@ -254,7 +254,7 @@ print(sad_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(sad_all)) %>%
-  mutate(Mean = Mean - 2.61)
+  mutate(Mean = Mean - 2.637890)
 
 # Calculate standard error for 'sad_all' by 'condition'
 std_errors <- data %>%

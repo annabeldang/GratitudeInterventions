@@ -14,7 +14,8 @@ library(ggplot2)
 library(ggsignif)
 library(dplyr)
 library(readr)
-
+library(psych)
+library(GPArotation)
 ```
 
 #Categories
@@ -62,10 +63,39 @@ data <- data %>%
 ```{r set up}
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
+mean(data$gratitude_all)
+sd(data$gratitude_all)
+grat_omega <- omega(data[, c("grateful", "appreciative", "thankful")])
+print(grat_omega)
+
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
+mean(data$happy_all)
+sd(data$happy_all)
+happy_omega <- omega(data[, c("happy", "satisfied", "content", "joyful", "pleased")])
+print(happy_omega)
+
 data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
-data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious", "nervous")], na.rm = TRUE)
+mean(data$optimistic_all)
+sd(data$optimistic_all)
+optimistic_omega <- data[, c("optimistic", "hopeful")]
+optimistic_omega <- omega(optimistic_omega, nfactors = 1)
+print(optimistic_omega)
+
+data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious")], na.rm = TRUE)
+mean(data$sad_all)
+sd(data$sad_all)
+sad_omega <- omega(data[, c("sad", "depressed", "anxious")])
+print(sad_omega)
+
 data$indebted_all <- rowMeans(data[, c("indebted", "obligated")], na.rm = TRUE)
+mean(data$indebted_all)
+sd(data$indebted_all)
+indebted_omega <- data[, c("indebted", "obligated")]
+indebted_omega <- omega(indebted_omega, nfactors = 1)
+print(indebted_omega)
+
+mean(data$guilty)
+sd(data$guilty)
 
 data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
 data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)

@@ -16,7 +16,6 @@ library(scales)
 library(qualtRics)
 
 ```
-
 ```{r setup}
 # Dangs API credential at UCSD
 qualtrics_api_credentials(
@@ -48,6 +47,7 @@ data_2$envy_all <- rowMeans(data_2[, c("envious", "bitter", "jealous")], na.rm =
 data_2$ls_total <- rowMeans(data_2[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
 data_2$sc_total <- rowMeans(data_2[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data_2$self_image_total <- rowMeans(data_2[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+
 ```
 
 ```{r participant statistics}
