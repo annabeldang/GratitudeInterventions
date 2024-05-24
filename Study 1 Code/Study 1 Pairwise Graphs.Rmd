@@ -50,7 +50,10 @@ data <- bind_rows(data_temp2, study_1.4)
 
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA")
+  filter(Finished != "0", condition !="NA") %>% 
+  
+  # select relevant variables
+  select(StartDate: nervous)
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)

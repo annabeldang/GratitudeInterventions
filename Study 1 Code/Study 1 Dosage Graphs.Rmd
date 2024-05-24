@@ -54,8 +54,10 @@ data <- bind_rows(data_temp2, study_1.4)
 
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA")
-
+  filter(Finished != "0", condition !="NA") %>% 
+  
+  # select relevant variables
+  select(StartDate: nervous)
 ```
 
 ```{r set up}
