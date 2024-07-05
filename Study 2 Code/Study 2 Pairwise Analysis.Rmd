@@ -14,8 +14,8 @@ library(effsize)
 library(compute.es)
 library(ggplot2)
 library(ggsignif)
-library(dplyr)
-library(qualtRics)
+library(tidyverse)
+library(here)
 
 ```
 
@@ -23,23 +23,15 @@ library(qualtRics)
 
 ```{r setup}
 
-# Dangs API credential at UCSD
-qualtrics_api_credentials(
-  api_key = 'urh7PtWEEOkAzrbjmYQC2FoipCvCT4n8ZIByL5rH', 
-  base_url = 'iad1.qualtrics.com',
-  install = TRUE,
-  overwrite = TRUE)
+# specify directory
+i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
 
-readRenviron("~/.Renviron")
+#Set up
 
-# open data
-DF <- fetch_survey(surveyID = 'SV_0rIOXQcp62uVzsq',
-                   force_request = T,
-                   label = F,
-                   convert = F)
+data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
 
 # process data
-data <- DF %>%
+data <- data %>%
   # remove incomplete or test observations
   filter(Finished != "0", condition !="NA")
 
