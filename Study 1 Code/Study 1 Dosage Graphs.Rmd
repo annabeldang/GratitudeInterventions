@@ -213,10 +213,9 @@ summary(lm_model)
 r_squared <- summary(lm_model)$r.squared
 r_squared_happy <- round(r_squared, 2)
 
-# Create scatter plot with linear regression line and R-squared
 happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color = condition)) +
   geom_point(size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +  # No need for se = FALSE here
   geom_errorbar(aes(ymin = happy_mean - happy_se, ymax = happy_mean + happy_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
@@ -235,7 +234,7 @@ happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color 
                 label = paste("R² =", r_squared_happy)),
             hjust = 1, vjust = 0, color = "black", size = 3)
 
-# Print the plot
+# Display the plot
 print(happy_plot)
 
 ```

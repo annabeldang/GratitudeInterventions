@@ -27,7 +27,7 @@ data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.
 # process data
 data_2 <- data_2 %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA")
+  filter(Finished != "0", condition !="NA", condition != "0")
 
 data_2$gratitude_all <- rowMeans(data_2[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data_2$happy_all <- rowMeans(data_2[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
@@ -105,6 +105,7 @@ cond.means_1 <- data_2 %>%
   summarize(Mean = mean(gratitude_all)) %>%
   mutate(Mean = Mean - 4.502193)
 
+print(cond.means_1)
 ```
 ```{r happy}
 happy_mean<-data_2%>%group_by(condition)%>%summarize(Mean=mean(happy_all)) 
@@ -145,7 +146,7 @@ r_squared_happy_2 <- round(r_squared, 2)
 # Create scatter plot with linear regression line and R-squared
 happy_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = happy_mean, color = condition)) +
   geom_point(size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
   geom_errorbar(aes(ymin = happy_mean - happy_se, ymax = happy_mean + happy_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
@@ -204,7 +205,7 @@ r_squared_sad_2 <- round(r_squared, 2)
 # Create scatter plot with linear regression line and R-squared
 sad_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = sad_mean, color = condition)) +
   geom_point(size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
   geom_errorbar(aes(ymin = sad_mean - sad_se, ymax = sad_mean + sad_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
@@ -266,7 +267,7 @@ r_squared_ls_2 <- round(r_squared, 2)
 # Create scatter plot with linear regression line and R-squared
 ls_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = ls_mean, color = condition)) +
   geom_point(size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
   geom_errorbar(aes(ymin = ls_mean - ls_se, ymax = ls_mean + ls_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
