@@ -14,8 +14,8 @@ library(effsize)
 library(compute.es)
 library(ggplot2)
 library(ggsignif)
-library(dplyr)
-library(qualtRics)
+library(tidyverse)
+library(here)
 
 ```
 
@@ -23,11 +23,23 @@ library(qualtRics)
 
 ```{r setup}
 
+<<<<<<< HEAD
 path <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(path)
 
 # process data
 data <- read.csv("Gratitude_Interventions_Study_2.csv")
+=======
+# specify directory
+i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
+
+#Set up
+
+data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
+
+# process data
+data <- data %>%
+>>>>>>> fbbb9d4c6c5da047dae694f51711b1e741a9e494
   # remove incomplete or test observations
 data <- data[data$Finished == 1, ]
 

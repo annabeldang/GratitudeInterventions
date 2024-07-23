@@ -10,7 +10,7 @@ date: "2024-04-10"
 ```{r libraries}
 
 library(ggplot2)
-library(dplyr)
+library(tidyverse)
 library(patchwork)
 library(scales)
 library(here)
@@ -22,8 +22,22 @@ library(ggpubr)
 
 ```{r setup}
 
+<<<<<<< HEAD
 path <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(path)
+=======
+# specify directory
+i_am("Study 2 Code/Study 2 Pairwise Graphs.Rmd")
+
+#Set up
+
+data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
+
+# process data
+data_2 <- data_2 %>%
+  # remove incomplete or test observations
+  filter(Finished != "0", condition !="NA")
+>>>>>>> fbbb9d4c6c5da047dae694f51711b1e741a9e494
 
 # process data
 data_2 <- read.csv("Gratitude_Interventions_Study_2.csv")

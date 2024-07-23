@@ -11,33 +11,29 @@ output:
 ```{r libraries}
 
 library(ggplot2)
-library(dplyr)
+library(tidyverse)
 library(patchwork)
 library(scales)
 library(ggpubr)
+library(here)
 
 ```
 
 ```{r categories}
 
-#Set up
-path <- dirname(rstudioapi::getActiveDocumentContext()$path)
-setwd(path)
+# specify directory
+i_am("Study 1 Code/Study 1 Dosage Graphs.Rmd")
 
 #Set up
 
-study_1.1 <- read.csv("Gratitude_Interventions_Study_1.1.csv")
-study_1.1 <- study_1.1[study_1.1$Finished == 1, ]
+study_1.1 <- read.csv(file = here("Study 1 Data", "Gratitude_Interventions_Study_1.1.csv"))
 
-study_1.2 <- read.csv("Gratitude_Interventions_Study_1.2.csv")
-study_1.2 <- study_1.2[study_1.2$Finished == 1, ]
+study_1.2 <- read.csv(file = here("Study 1 Data", "Gratitude_Interventions_Study_1.2.csv"))
 
-study_1.3 <- read.csv("Gratitude_Interventions_Study_1.3.csv")
-study_1.3 <- study_1.3[study_1.3$Finished == 1, ]
+study_1.3 <- read.csv(file = here("Study 1 Data", "Gratitude_Interventions_Study_1.3.csv"))
 study_1.3$race_2 <- as.numeric(study_1.3$race_2)
 
-study_1.4 <- read.csv("Gratitude_Interventions_Study_1.4.csv")
-study_1.4 <- study_1.4[study_1.4$Finished == 1, ]
+study_1.4 <- read.csv(file = here("Study 1 Data", "Gratitude_Interventions_Study_1.4.csv"))
 study_1.4$race_2 <- as.numeric(study_1.4$race_2)
 
 # File paths
@@ -47,17 +43,14 @@ file_paths <- c("Gratitude_Interventions_Study_1.1.csv",
                 "Gratitude_Interventions_Study_1.4.csv")
 
 # Read and combine the CSV files
-data <- lapply(file_paths, read.csv)
 data_temp1 <- bind_rows(study_1.1, study_1.2)
 data_temp2 <- bind_rows(data_temp1, study_1.3)
 data <- bind_rows(data_temp2, study_1.4)
 
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA") %>% 
+  filter(Finished != "0", condition !="NA")
   
-  # select relevant variables
-  select(StartDate: nervous)
 ```
 
 ```{r set up}
@@ -220,10 +213,9 @@ summary(lm_model)
 r_squared <- summary(lm_model)$r.squared
 r_squared_happy <- round(r_squared, 2)
 
-# Create scatter plot with linear regression line and R-squared
 happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color = condition)) +
   geom_point(size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +  # No need for se = FALSE here
   geom_errorbar(aes(ymin = happy_mean - happy_se, ymax = happy_mean + happy_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
@@ -242,7 +234,7 @@ happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color 
                 label = paste("R² =", r_squared_happy)),
             hjust = 1, vjust = 0, color = "black", size = 3)
 
-# Print the plot
+# Display the plot
 print(happy_plot)
 
 ```
@@ -284,7 +276,7 @@ r_squared_sad <- round(r_squared, 2)
 # Create scatter plot with linear regression line and R-squared
 sad_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sad_mean, color = condition)) +
   geom_point(size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
   geom_errorbar(aes(ymin = sad_mean - sad_se, ymax = sad_mean + sad_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
@@ -347,7 +339,7 @@ r_squared_ls <- round(r_squared, 2)
 # Create scatter plot with linear regression line and R-squared
 ls_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ls_mean, color = condition)) +
   geom_point(size = 2) +
-  geom_smooth(method = "lm", se = FALSE, color = "red", size = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
   geom_errorbar(aes(ymin = ls_mean - ls_se, ymax = ls_mean + ls_se), width = 0.1) +
   scale_color_manual(values = condition_color, labels = condition_name, 
                      name = "Condition") +
