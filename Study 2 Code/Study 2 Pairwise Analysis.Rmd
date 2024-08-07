@@ -23,13 +23,6 @@ library(here)
 
 ```{r setup}
 
-<<<<<<< HEAD
-path <- dirname(rstudioapi::getActiveDocumentContext()$path)
-setwd(path)
-
-# process data
-data <- read.csv("Gratitude_Interventions_Study_2.csv")
-=======
 # specify directory
 i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
 
@@ -39,9 +32,9 @@ data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.cs
 
 # process data
 data <- data %>%
->>>>>>> fbbb9d4c6c5da047dae694f51711b1e741a9e494
   # remove incomplete or test observations
-data <- data[data$Finished == 1, ]
+  filter(Finished != "0", condition !="NA") %>%
+  select("StartDate":"pageNo")
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 mean(data$gratitude_all)
@@ -86,6 +79,12 @@ envy_omega <- omega(envy_omega, nfactors = 1)
 print(envy_omega)
 
 data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
+mean(data$ls_total)
+sd(data$ls_total)
+ls_omega <- data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")]
+ls_omega <- omega(ls_omega)
+print(ls_omega)
+
 data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
 
