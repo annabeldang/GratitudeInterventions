@@ -22,7 +22,6 @@ library(here)
 #Categories
 
 ```{r setup}
-
 # specify directory
 i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
 
@@ -35,7 +34,9 @@ data <- data %>%
   # remove incomplete or test observations
   filter(Finished != "0", condition !="NA") %>%
   select("StartDate":"pageNo")
+```
 
+```{r measures}
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 mean(data$gratitude_all)
 sd(data$gratitude_all)
@@ -90,6 +91,23 @@ data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signatu
 
 ```
 
+```{r participant statistics}
+
+data_2 <- data_2 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+data_2 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(data_2$age)
+sd(data_2$age)
+
+```
 
 ```{r categories}
 #Conditions

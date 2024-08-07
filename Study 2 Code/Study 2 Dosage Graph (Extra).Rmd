@@ -18,26 +18,22 @@ library(here)
 ```
 
 ```{r setup}
-<<<<<<< HEAD
-path <- dirname(rstudioapi::getActiveDocumentContext()$path)
-setwd(path)
-
-# process data
-data <- read.csv("Gratitude_Interventions_Study_2.csv")
-=======
 # specify directory
-i_am("Study 2 Code/Study 2 Dosage Graph (Extra).Rmd")
+i_am("Study 2 Code/Study 2 Dosage Graph.Rmd")
 
 #Set up
 
-data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
+data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
 
 # process data
-data <- data %>%
->>>>>>> fbbb9d4c6c5da047dae694f51711b1e741a9e494
+data_2 <- data_2 %>%
   # remove incomplete or test observations
-data <- data[data$Finished == 1, ]
+  filter(Finished != "0", condition !="NA") %>%
+  select("StartDate":"pageNo")
+```
 
+
+```{r measures}
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
 data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
@@ -48,24 +44,6 @@ data$envy_all <- rowMeans(data[, c("envious", "bitter", "jealous")], na.rm = TRU
 data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
 data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
-```
-
-```{r participant statistics}
-
-data <- data %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-data %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(data$age)
-sd(data$age)
-
 ```
 
 ```{r categories}
@@ -442,34 +420,4 @@ ladder_plot_2 <- ggplot(dosage_data, aes(x = gratitude_mean, y = ladder_mean, co
 
 # Print the plot
 print(ladder_plot_2)
-```
-
-#Combined Graphs
-```{r combined graph}
-# Set theme settings
-theme_settings <- list(
-  plot.title = theme(text = element_text(size = 8, face = "bold")),
-  axis.title = theme(text = element_text(size = 6)) 
-)
-
-# Combine the plots
-combined_plots <- (
-  (optimistic_plot_2 + theme_settings + theme(legend.position = "none")) +
-  (indebted_plot_2 + theme_settings + theme(legend.position = "none")) +
-  (guilty_plot_2 + theme_settings + theme(legend.position = "none")) +
-    plot_layout(guides = "collect")
-
-combined_plots_2 <- (
-  (sc_plot_2 + theme_settings + theme(legend.position = "none")) +
-  (ladder_plot_2 + theme_settings + theme(legend.position = "none")) +
-  (self_image_plot_2 + theme_settings + theme(legend.position = "right"))
-  + plot_layout(guides = "collect") 
-
-# Set the size of the plot
-options(repr.plot.width = 15, repr.plot.height = 13)
-
-# Print the combined plot
-print(combined_plots)
-print(combined_plots_2)
-
 ```

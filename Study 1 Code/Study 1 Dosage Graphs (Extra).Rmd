@@ -16,7 +16,6 @@ library(patchwork)
 library(scales)
 library(here)
 
-
 ```
 
 ```{r categories}
@@ -49,10 +48,11 @@ data <- bind_rows(data_temp2, study_1.4)
 
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA")
+  filter(Finished != "0", condition !="NA") %>%
+  select("StartDate":"nervous")
 ```
 
-```{r set up}
+```{r measures}
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
@@ -65,72 +65,6 @@ data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.
 data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
 
-```
-```{r participant statistics}
-
-#Study 1.1
-study_1.1 <- study_1.1 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.1 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(study_1.1$age)
-sd(study_1.1$age)
-
-#Study 1.2
-study_1.2 <- study_1.2 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.2 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(study_1.2$age)
-sd(study_1.2$age)
-
-#Study 1.3
-study_1.3 <- study_1.3 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.3 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-study_1.3_filtered <- study_1.3 %>%
-  filter(ResponseId!= "R_1BQpilnhktdy8wz") #Participant incorrectly inputted birth year instead of age
-
-mean(study_1.3_filtered$age)
-sd(study_1.3_filtered$age)
-
-#Study 1.4
-
-study_1.4 <- study_1.4 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.4 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(study_1.4$age)
-sd(study_1.4$age)
 ```
 
 ```{r categories}
@@ -489,34 +423,4 @@ self_image_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = self_image_me
 
 # Print the plot
 print(self_image_plot)
-```
-
-#Combined Graphs
-```{r combined graph}
-# Set theme settings
-theme_settings <- list(
-  plot.title = theme(text = element_text(size = 8, face = "bold")),
-  axis.title = theme(text = element_text(size = 6)) 
-)
-
-# Combine the plots
-combined_plots <- (
-  (optimistic_plot + theme_settings + theme(legend.position = "none")) +
-  (indebted_plot + theme_settings + theme(legend.position = "none")) +
-  (guilty_plot + theme_settings + theme(legend.position = "none")) +
-) + plot_layout(guides = "collect")
-
-combined_plots_2 <- (
-  (sc_plot + theme_settings + theme(legend.position = "none")) +
-  (ladder_plot + theme_settings + theme(legend.position = "none")) +
-  (self_image_plot + theme_settings + theme(legend.position = "right"))
-) + plot_layout(guides = "collect") 
-
-# Set the size of the plot
-options(repr.plot.width = 15, repr.plot.height = 13)
-
-# Print the combined plot
-print(combined_plots)
-print(combined_plots_2)
-
 ```

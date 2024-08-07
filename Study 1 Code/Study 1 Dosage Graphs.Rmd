@@ -14,7 +14,6 @@ library(ggplot2)
 library(tidyverse)
 library(patchwork)
 library(scales)
-library(ggpubr)
 library(here)
 
 ```
@@ -49,11 +48,12 @@ data <- bind_rows(data_temp2, study_1.4)
 
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA")
+  filter(Finished != "0", condition !="NA") %>%
+  select("StartDate":"nervous")
   
 ```
 
-```{r set up}
+```{r measures}
 
 data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
@@ -66,72 +66,6 @@ data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.
 data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
 
-```
-```{r participant statistics}
-
-#Study 1.1
-study_1.1 <- study_1.1 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.1 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(study_1.1$age)
-sd(study_1.1$age)
-
-#Study 1.2
-study_1.2 <- study_1.2 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.2 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(study_1.2$age)
-sd(study_1.2$age)
-
-#Study 1.3
-study_1.3 <- study_1.3 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.3 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-study_1.3_filtered <- study_1.3 %>%
-  filter(ResponseId!= "R_1BQpilnhktdy8wz") #Participant incorrectly inputted birth year instead of age
-
-mean(study_1.3_filtered$age)
-sd(study_1.3_filtered$age)
-
-#Study 1.4
-
-study_1.4 <- study_1.4 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-study_1.4 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(study_1.4$age)
-sd(study_1.4$age)
 ```
 
 ```{r categories}

@@ -14,35 +14,27 @@ library(tidyverse)
 library(patchwork)
 library(scales)
 library(here)
-library(qualtRics)
-library(ggpubr)
 
 ```
 #Categories
 
 ```{r setup}
-
-<<<<<<< HEAD
-path <- dirname(rstudioapi::getActiveDocumentContext()$path)
-setwd(path)
-=======
 # specify directory
-i_am("Study 2 Code/Study 2 Pairwise Graphs.Rmd")
+i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
 
 #Set up
 
 data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
 
 # process data
-data_2 <- data_2 %>%
+data_2 <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA")
->>>>>>> fbbb9d4c6c5da047dae694f51711b1e741a9e494
+  filter(Finished != "0", condition !="NA") %>%
+```
 
-# process data
-data_2 <- read.csv("Gratitude_Interventions_Study_2.csv")
-  # remove incomplete or test observations
-data_2 <- data_2[data_2$Finished == 1, ]
+
+```{r measurs}
+select("StartDate":"pageNo")
 
 data_2$gratitude_all <- rowMeans(data_2[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data_2$happy_all <- rowMeans(data_2[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)

@@ -17,15 +17,6 @@ library(here)
 
 ```
 ```{r setup}
-<<<<<<< HEAD
-path <- dirname(rstudioapi::getActiveDocumentContext()$path)
-setwd(path)
-
-# process data
-data_2 <- read.csv("Gratitude_Interventions_Study_2.csv")
-  # remove incomplete or test observations
-data_2 <- data_2[data_2$Finished == 1, ]
-=======
 # specify directory
 i_am("Study 2 Code/Study 2 Dosage Graph.Rmd")
 
@@ -36,8 +27,12 @@ data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.
 # process data
 data_2 <- data_2 %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA", condition != "0")
->>>>>>> fbbb9d4c6c5da047dae694f51711b1e741a9e494
+  filter(Finished != "0", condition !="NA") %>%
+  select("StartDate":"pageNo")
+```
+
+
+```{r measures}
 
 data_2$gratitude_all <- rowMeans(data_2[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data_2$happy_all <- rowMeans(data_2[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
@@ -49,24 +44,6 @@ data_2$envy_all <- rowMeans(data_2[, c("envious", "bitter", "jealous")], na.rm =
 data_2$ls_total <- rowMeans(data_2[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
 data_2$sc_total <- rowMeans(data_2[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data_2$self_image_total <- rowMeans(data_2[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
-
-```
-
-```{r participant statistics}
-
-data_2 <- data_2 %>%
-  mutate(sex_name = case_when(
-    sex == 1 ~ "male",
-    sex == 2 ~ "female",
-    sex == 3 ~ "other"
-  ))
-
-data_2 %>%
-  group_by(sex_name) %>%
-  summarise(sex_count = n())
-
-mean(data_2$age)
-sd(data_2$age)
 
 ```
 
