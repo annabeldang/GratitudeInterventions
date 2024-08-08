@@ -15,6 +15,7 @@ library(compute.es)
 library(ggplot2)
 library(ggsignif)
 library(tidyverse)
+library(psych)
 library(here)
 
 ```
@@ -87,8 +88,21 @@ ls_omega <- omega(ls_omega)
 print(ls_omega)
 
 data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
-data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+mean(data$sc_total)
+sd(data$sc_total)
+sc_omega <- data[, c("sc_1", "sc_2", "sc_3")]
+sc_omega <- omega(sc_omega)
+print(sc_omega)
 
+mean(data$ladder, na.rm = TRUE)
+sd(data$ladder, na.rm = TRUE)
+
+data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+mean(data$self_image_total)
+sd(data$self_image_total)
+self_image_omega <- data[, c("circle_task", "self_image", "signature")]
+self_image_omega <- omega(self_image_omega)
+print(self_image_omega)
 ```
 
 ```{r participant statistics}
