@@ -26,15 +26,15 @@ i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
 data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
 
 # process data
-data_2 <- data %>%
+data_2 <- data_2 %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA") %>%
+  filter(Finished != "0", condition !="NA", condition != "0") %>%
+select("StartDate":"pageNo")
+
 ```
 
 
-```{r measurs}
-select("StartDate":"pageNo")
-
+```{r measures}
 data_2$gratitude_all <- rowMeans(data_2[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
 data_2$happy_all <- rowMeans(data_2[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
 data_2$optimistic_all <- rowMeans(data_2[, c("optimistic", "hopeful")], na.rm = TRUE)
@@ -97,7 +97,7 @@ gratitude_data_2 <- data.frame(
   condition = conditions_2,
   gratitude_mean = gratitude_mean_2,
   gratitude_se = gratitude_se_2,
-  gratitude_ef = -(c(0, con_1_ef_2$estimate, con_2_ef_2$estimate, con_3_ef_2$estimate, control_1_ef_2$estimate, control_2_ef_2$estimate, control_3_ef_2$estimate, control_4_ef_2$estimate, control_5_ef_2$estimate,control_6_ef_2$estimate,control_7_ef_2$estimate)))
+  gratitude_ef = -(c(0, con_1_ef_2$estimate, con_2_ef_2$estimate, con_3_ef_2$estimate, control_1_ef_2$estimate, control_2_ef_2$estimate, control_3_ef_2$estimate, control_4_ef_2$estimate,control_5_ef_2$estimate,control_6_ef_2$estimate,control_7_ef_2$estimate)))
 
 # Assign ordered condition titles, colors, and names
 gratitude_data_2 <- gratitude_data_2 %>%
@@ -124,7 +124,7 @@ gratitude_data_2 <- gratitude_data_2 %>%
     condition == "5" ~ "Gratitude List",
     condition == "6" ~ "Gratitude Letter",
     condition == "7" ~ "Gratitude Text",
-    condition == "8" ~ "Chan Gratitude List",
+    condition == "8" ~ "Naikan Gratitude List",
     condition == "9" ~ "Mental Subtraction Task",
     condition == "10" ~ "Gratitude to God List",
     condition == "11" ~ "Gratitude to God Letter",
@@ -156,13 +156,18 @@ gratitude_graph_2 <- ggplot(gratitude_data_2, aes(x = ordered_condition_name, y 
        title = "Study 2") +
   ylim(-0.5, 2.5) + 
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),  
-        axis.ticks.y = element_line(color = "black"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_blank()) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+    axis.title = element_text(size = 8, face = "bold"),
+    axis.text = element_text(size = 6, face = "bold"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 6, face = "bold"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),  
+    axis.ticks.y = element_line(color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(gratitude_data_2$condition_color),
                     labels = unique(gratitude_data_2$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
@@ -173,7 +178,7 @@ gratitude_graph_2 <- ggplot(gratitude_data_2, aes(x = ordered_condition_name, y 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 1.45, xend = 1.45, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 1.45, xend = 1.55, y = 1.75, yend = 1.75), color = "black", size = 0.5) +
-  geom_text(aes(x = 1.5, y = 1.82), label = "*", color = "red", size = 5) +
+  geom_text(aes(x = 1.5, y = 1.82), label = "*", color = "black", size = 5) +
   geom_segment(aes(x = 1.55, xend = 11.5, y = 1.8, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 1.55, xend = 1.55, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
@@ -182,7 +187,7 @@ gratitude_graph_2 <- ggplot(gratitude_data_2, aes(x = ordered_condition_name, y 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
   geom_segment(aes(x = 2.5, xend = 2.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
   geom_segment(aes(x = 2.5, xend = 4.5, y = 1.95, yend = 1.95), color = "black", size = 0.5) +
-  geom_text(aes(x = 3.5, y = 1.98), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 3.5, y = 1.98), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 4.5, xend = 11.5, y = 2.0, yend = 2.0), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 4.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
@@ -191,7 +196,7 @@ gratitude_graph_2 <- ggplot(gratitude_data_2, aes(x = ordered_condition_name, y 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 4.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 5.5, y = 2.15, yend = 2.15), color = "black", size = 0.5) + 
-  geom_text(aes(x = 5, y = 2.18), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 5, y = 2.18), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 5.5, xend = 11.5, y = 2.2, yend = 2.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 5.5, xend = 5.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 2.1, yend = 2.2), color = "black", size = 0.5) +
@@ -200,7 +205,7 @@ gratitude_graph_2 <- ggplot(gratitude_data_2, aes(x = ordered_condition_name, y 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 5.5, xend = 5.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 5.5, xend = 6.5, y = 2.35, yend = 2.35), color = "black", size = 0.5) + 
-  geom_text(aes(x = 6, y = 2.38), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 6, y = 2.38), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 6.5, xend = 11.5, y = 2.4, yend = 2.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 6.5, xend = 6.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 2.3, yend = 2.4), color = "black", size = 0.5) +
@@ -209,7 +214,7 @@ geom_segment(aes(x = 0.5, xend = 6.5, y = 2.6, yend = 2.6), color = "black", siz
   geom_segment(aes(x = 0.5, xend = 0.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 6.5, xend = 6.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 6.5, xend = 7.5, y = 2.55, yend = 2.55), color = "black", size = 0.5) + 
-  geom_text(aes(x = 7, y = 2.58), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 7, y = 2.58), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 7.5, xend = 11.5, y = 2.6, yend = 2.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 7.5, xend = 7.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 2.5, yend = 2.6), color = "black", size = 0.5) +
@@ -218,7 +223,7 @@ geom_segment(aes(x = 0.5, xend = 9.45, y = 2.8, yend = 2.8), color = "black", si
   geom_segment(aes(x = 0.5, xend = 0.5, y = 2.7, yend = 2.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 9.45, xend = 9.45, y = 2.7, yend = 2.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 9.45, xend = 9.55, y = 2.75, yend = 2.75), color = "black", size = 0.5) + 
-  geom_text(aes(x = 9.5, y = 2.82), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 9.5, y = 2.82), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 9.55, xend = 11.5, y = 2.8, yend = 2.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 9.55, xend = 9.55, y = 2.7, yend = 2.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 2.7, yend = 2.8), color = "black", size = 0.5)
@@ -281,7 +286,7 @@ happy_data_2 <- happy_data_2 %>%
     condition == "5" ~ "Gratitude List",
     condition == "6" ~ "Gratitude Letter",
     condition == "7" ~ "Gratitude Text",
-    condition == "8" ~ "Chan Gratitude List",
+    condition == "8" ~ "Naikan Gratitude List",
     condition == "9" ~ "Mental Subtraction Task",
     condition == "10" ~ "Gratitude to God List",
     condition == "11" ~ "Gratitude to God Letter",
@@ -313,13 +318,18 @@ happy_graph_2 <- ggplot(happy_data_2, aes(x = ordered_condition_name, y = happy_
        title = "Study 2") +
   ylim(-0.5, 2.5) + 
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),  
-        axis.ticks.y = element_line(color = "black"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_blank()) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+    axis.title = element_text(size = 8, face = "bold"),
+    axis.text = element_text(size = 6, face = "bold"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 6, face = "bold"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),  
+    axis.ticks.y = element_line(color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(happy_data_2$condition_color),
                     labels = unique(happy_data_2$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
@@ -329,7 +339,7 @@ happy_graph_2 <- ggplot(happy_data_2, aes(x = ordered_condition_name, y = happy_
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 1.45, xend = 1.45, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 1.45, xend = 1.55, y = 1.15, yend = 1.15), color = "black", size = 0.5) + 
-  geom_text(aes(x = 1.5, y = 1.22), label = "*", color = "red", size = 5) +
+  geom_text(aes(x = 1.5, y = 1.22), label = "*", color = "black", size = 5) +
   geom_segment(aes(x = 1.55, xend = 11.5, y = 1.2, yend = 1.2), color = "black", size = 0.5) + 
   geom_segment(aes(x = 1.55, xend = 1.55, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
@@ -338,7 +348,7 @@ happy_graph_2 <- ggplot(happy_data_2, aes(x = ordered_condition_name, y = happy_
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 3.5, xend = 3.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 3.5, xend = 4.5, y = 1.35, yend = 1.35), color = "black", size = 0.5) +
-  geom_text(aes(x = 4, y = 1.38), label = "*", color = "red", size = 5) +
+  geom_text(aes(x = 4, y = 1.38), label = "*", color = "black", size = 5) +
   geom_segment(aes(x = 4.5, xend = 11.5, y = 1.4, yend = 1.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 4.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 1.3, yend = 1.4), color = "black", size = 0.5) +
@@ -347,7 +357,7 @@ happy_graph_2 <- ggplot(happy_data_2, aes(x = ordered_condition_name, y = happy_
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 4.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 8.5, y = 1.55, yend = 1.55), color = "black", size = 0.5) + 
-  geom_text(aes(x = 6.5, y = 1.58), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 6.5, y = 1.58), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 8.5, xend = 11.5, y = 1.6, yend = 1.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 8.5, xend = 8.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 1.5, yend = 1.6), color = "black", size = 0.5) +
@@ -356,7 +366,7 @@ happy_graph_2 <- ggplot(happy_data_2, aes(x = ordered_condition_name, y = happy_
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 8.5, xend = 8.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 8.5, xend = 10.5, y = 1.75, yend = 1.75), color = "black", size = 0.5) + 
-  geom_text(aes(x = 9.5, y = 1.78), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 9.5, y = 1.78), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 10.5, xend = 11.5, y = 1.8, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 10.5, xend = 10.5, y = 1.7, yend = 1.8), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 1.7, yend = 1.8), color = "black", size = 0.5)
@@ -418,7 +428,7 @@ sad_data_2 <- sad_data_2 %>%
     condition == "5" ~ "Gratitude List",
     condition == "6" ~ "Gratitude Letter",
     condition == "7" ~ "Gratitude Text",
-    condition == "8" ~ "Chan Gratitude List",
+    condition == "8" ~ "Naikan Gratitude List",
     condition == "9" ~ "Mental Subtraction Task",
     condition == "10" ~ "Gratitude to God List",
     condition == "11" ~ "Gratitude to God Letter",
@@ -450,13 +460,18 @@ sad_graph_2 <- ggplot(sad_data_2, aes(x = ordered_condition_name, y = sad_mean, 
        title = "Study 2") +
   ylim(-0.5, 2.5) + 
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),  
-        axis.ticks.y = element_line(color = "black"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_blank()) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+    axis.title = element_text(size = 8, face = "bold"),
+    axis.text = element_text(size = 6, face = "bold"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 6, face = "bold"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),  
+    axis.ticks.y = element_line(color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(sad_data_2$condition_color),
                     labels = unique(sad_data_2$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
@@ -467,7 +482,7 @@ sad_graph_2 <- ggplot(sad_data_2, aes(x = ordered_condition_name, y = sad_mean, 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 8.5, xend = 8.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 8.5, xend = 10.5, y = 0.175, yend = 0.175), color = "black", size = 0.5) +
-  geom_text(aes(x = 9.5, y = 0.2), label = "*", color = "red", size = 5) +
+  geom_text(aes(x = 9.5, y = 0.2), label = "*", color = "black", size = 5) +
   geom_segment(aes(x = 10.5, xend = 11.5, y = 0.2, yend = 0.2), color = "black", size = 0.5) + 
   geom_segment(aes(x = 10.5, xend = 10.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 0.15, yend = 0.2), color = "black", size = 0.5) +
@@ -476,7 +491,7 @@ sad_graph_2 <- ggplot(sad_data_2, aes(x = ordered_condition_name, y = sad_mean, 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
   geom_segment(aes(x = 7.5, xend = 7.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
   geom_segment(aes(x = 7.5, xend = 9.5, y = 0.275, yend = 0.275), color = "black", size = 0.5) + 
-  geom_text(aes(x = 8.5, y = 0.3), label = "*", color = "red", size = 5) +
+  geom_text(aes(x = 8.5, y = 0.3), label = "*", color = "black", size = 5) +
   geom_segment(aes(x = 9.5, xend = 11.5, y = 0.3, yend = 0.3), color = "black", size = 0.5) + 
   geom_segment(aes(x = 9.5, xend = 9.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 0.25, yend = 0.3), color = "black", size = 0.5) +
@@ -485,7 +500,7 @@ sad_graph_2 <- ggplot(sad_data_2, aes(x = ordered_condition_name, y = sad_mean, 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 0.35, yend = 0.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 4.5, y = 0.35, yend = 0.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 4.5, xend = 8.5, y = 0.375, yend = 0.375), color = "black", size = 0.5) + 
-  geom_text(aes(x = 6.5, y = 0.4), label = "*", color = "red", size = 5) +
+  geom_text(aes(x = 6.5, y = 0.4), label = "*", color = "black", size = 5) +
   geom_segment(aes(x = 8.5, xend = 11.5, y = 0.4, yend = 0.4), color = "black", size = 0.5) + 
   geom_segment(aes(x = 8.5, xend = 8.5, y = 0.35, yend = 0.4), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 0.35, yend = 0.4), color = "black", size = 0.5)
@@ -547,7 +562,7 @@ ls_data_2 <- ls_data_2 %>%
     condition == "5" ~ "Gratitude List",
     condition == "6" ~ "Gratitude Letter",
     condition == "7" ~ "Gratitude Text",
-    condition == "8" ~ "Chan Gratitude List",
+    condition == "8" ~ "Naikan Gratitude List",
     condition == "9" ~ "Mental Subtraction Task",
     condition == "10" ~ "Gratitude to God List",
     condition == "11" ~ "Gratitude to God Letter",
@@ -579,13 +594,18 @@ ls_graph_2 <- ggplot(ls_data_2, aes(x = ordered_condition_name, y = ls_mean, fil
        title = "Study 2") +
   ylim(-0.5, 2.5) + 
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),  
-        axis.ticks.y = element_line(color = "black"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_blank()) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+    axis.title = element_text(size = 8, face = "bold"),
+    axis.text = element_text(size = 6, face = "bold"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 6, face = "bold"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),  
+    axis.ticks.y = element_line(color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.line.x = element_blank()) +
   scale_fill_manual(values = unique(ls_data_2$condition_color),
                     labels = unique(ls_data_2$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
@@ -596,7 +616,7 @@ ls_graph_2 <- ggplot(ls_data_2, aes(x = ordered_condition_name, y = ls_mean, fil
   geom_segment(aes(x = 0.5, xend = 0.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
   geom_segment(aes(x = 2.5, xend = 2.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
   geom_segment(aes(x = 2.5, xend = 8.5, y = 0.625, yend = 0.625), color = "black", size = 0.5) + 
-  geom_text(aes(x = 5.5, y = 0.65), label = "*", color = "red", size = 5) +
+  geom_text(aes(x = 5.5, y = 0.65), label = "*", color = "black", size = 5) +
   geom_segment(aes(x = 8.5, xend = 11.5, y = 0.65, yend = 0.65), color = "black", size = 0.5) + 
   geom_segment(aes(x = 8.5, xend = 8.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 0.6, yend = 0.65), color = "black", size = 0.5) +
@@ -605,7 +625,7 @@ ls_graph_2 <- ggplot(ls_data_2, aes(x = ordered_condition_name, y = ls_mean, fil
   geom_segment(aes(x = 0.5, xend = 0.5, y = 0.7, yend = 0.75), color = "black", size = 0.5) +
   geom_segment(aes(x = 3.5, xend = 3.5, y = 0.7, yend = 0.75), color = "black", size = 0.5) +
   geom_segment(aes(x = 3.5, xend = 10.5, y = 0.725, yend = 0.725), color = "black", size = 0.5) +
-  geom_text(aes(x = 6.5, y = 0.75), label = "*", color = "red", size = 5)+
+  geom_text(aes(x = 6.5, y = 0.75), label = "*", color = "black", size = 5)+
   geom_segment(aes(x = 10.5, xend = 11.5, y = 0.75, yend = 0.75), color = "black", size = 0.5) +
   geom_segment(aes(x = 10.5, xend = 10.5, y = 0.7, yend = 0.75), color = "black", size = 0.5) +
   geom_segment(aes(x = 11.5, xend = 11.5, y = 0.7, yend = 0.75), color = "black", size = 0.5)
@@ -613,26 +633,12 @@ ls_graph_2 <- ggplot(ls_data_2, aes(x = ordered_condition_name, y = ls_mean, fil
 print(ls_graph_2)
 ```
 
-#Combined Graphs
-```{r combined graphs}
-# Set theme settings for larger plots and smaller titles
-theme_settings <- list(
-  plot.title = theme(text = element_text(size = 8, face = "bold")),  # Adjust title size
-  axis.title = theme(text = element_text(size = 6))    # Adjust axis title size
-)
+#Final Graphs
+```{r final graphs}
 
-# Combine the plots with adjusted theme settings
-combined_plot <- (
-  (gratitude_graph_2 + theme_settings + theme(legend.position = "none")) +
-  (happy_graph_2 + theme_settings + theme(legend.position = "none")) +
-  (sad_graph_2 + theme_settings + theme(legend.position = "none")) +
-  (ls_graph_2 + theme_settings + theme(legend.position = "right"))
-) + plot_layout(guides = "collect")  # Collect legends into one
+print(gratitude_graph_2)
+print(happy_graph_2)
+print(sad_graph_2)
+print(ls_graph_2)
 
-# Set the size of the plot
-options(repr.plot.width = 15, repr.plot.height = 13)  # Adjust width and height as needed
-
-# Print the combined plot
-print(combined_plot)
 ```
-
