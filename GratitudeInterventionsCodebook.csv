@@ -1,0 +1,263 @@
+Variable,Description,Values
+StartDate,Date when Qualtrics survey was opened,month/day/year time
+EndDate,Date when Qualtrics survey was closed,month/day/year time
+Status,Type of survey observation,"0 / IP Address: A normal response
+1 / Survey Preview: A preview response
+2 / Survey Test: A test response
+4 / Imported: An imported response
+8 / Spam: A possible spam response
+9  / Preview Spam: A possible spam response submitted through the preview link
+12 / Imported Spam: A possible spam response that was imported
+16 / Offline: A Qualtrics Offline App response
+17 / Offline Preview: Previews submitted through the Qualtrics Offline App. This feature is deprecated in latest versions of the app"
+Progress,Percentage of survey completed,0-100
+Duration (in seconds),Amount of time participant spent completing survey,
+Finished,Indicator of whether participant submitted a completed survey,"0 = participant left survey before completing
+1 = participant submitted completed survey"
+RecordedDate,Date survey was recorded in Qualtrics,
+ResponseId,Qualtrics-generated unique identifier for each participant,
+DistributionChannel,Method of survey distribution,"preview = preview version of survey used
+anonymous = anonymized official version of survey used"
+UserLanguage,Language that participant completed study in,EN = English
+consent,"After you have reviewed the consent form, please confirm below that you have reviewed the form and are ready to begin the study.","1 = Yes, I consent
+2 = No, I do not consent"
+control_events,"Control Condition: ""For the next few minutes, think back over the past day (past 24 hours) and write down five events that somehow affected you.""",
+control_interesting,"Control Condition: ""For the next few minutes, think back over the past day (past 24 hours) and write down five interesting events that somehow affected you.""",
+control_hassles,"Control Condition: ""For the next few minutes, think back over the past day and write down five hassles or annoying situations you had to face.""",
+grat_list,"Gratitude Intervention: ""For the next few minutes, think back over the past week and write down five things in your life that you are grateful or thankful for.""",
+grat_letter,"Gratitude Intervention: ""Today, we want you to write a letter of gratitude (yped communication that is normally sent in an envelope by mail or messenger) towards someone who who has done something for which you are extremely grateful.""",
+grat_text,"Gratitude Intervention: ""deeply. Today, we want you to use your cellphone to text (a short electronic message sent from one cell phone to another using a cellular network) someone who has done something for which you are extremely grateful, and thank them for their kind act(s).""",
+grat_hk_list,"Gratitude Intervention: ""Please reflect on each of the three good moments by asking yourself three questions. What did I receive? What did I give? What more could I do?""",
+grat_sing_sub,"Gratitude Intervention: ""Next, please choose one of the five things you have written and describe how your life would be like if that particular moment or person was not present in your life.""",
+grat_god_list,"Gratitude Intervention: ""Please write down anything for which you are grateful or thankful to God for giving you. You may list as many or as few things as you would like.""",
+grat_god_letter,"Gratitude Intervention: "". Think about how God, a higher power, or some type of spiritual being has benefited you. List how you refer to this entity here and indicate how you would best describe them. Please write a letter to this entity, thanking them for all the ways they have benefited you.""",
+happy,"Report of extent that participant experienced feeling ""happy"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+obligated,"Report of extent that participant experienced feeling ""obligated"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+sad,"Report of extent that participant experienced feeling ""sad"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+proud,"Report of extent that participant experienced feeling ""proud"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+optimistic,"Report of extent that participant experienced feeling ""optimistic"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+envious,"Report of extent that participant experienced feeling ""envious"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+angry,"Report of extent that participant experienced feeling ""angry"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+depressed,"Report of extent that participant experienced feeling ""depressed"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+pleased,"Report of extent that participant experienced feeling ""pleased"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+uncomfortable,"Report of extent that participant experienced feeling ""uncomfortable"" after completing the task","2 = ""not at all""; 7 = ""extremely"""
+annoyed,"Report of extent that participant experienced feeling ""annoyed"" after completing the task","3 = ""not at all""; 7 = ""extremely"""
+nervous,"Report of extent that participant experienced feeling ""nervous"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+thankful,"Report of extent that participant experienced feeling ""thankful"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+joyful,"Report of extent that participant experienced feeling ""joyful"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+anxious,"Report of extent that participant experienced feeling ""anxious"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+guilty,"Report of extent that participant experienced feeling ""guilty"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+hopeful,"Report of extent that participant experienced feeling ""hopeful"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+bitter,"Report of extent that participant experienced feeling ""bitter"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+appreciative,"Report of extent that participant experienced feeling ""appreciative"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+satisfied,"Report of extent that participant experienced feeling ""satisfied"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+indebted,"Report of extent that participant experienced feeling ""indebted"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+content,"Report of extent that participant experienced feeling ""content"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+ashamed,"Report of extent that participant experienced feeling ""ashamed"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+frustrated,"Report of extent that participant experienced feeling ""frustrated"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+scared,"Report of extent that participant experienced feeling ""scared"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+peaceful,"Report of extent that participant experienced feeling ""peaceful"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+grateful,"Report of extent that participant experienced feeling ""grateful"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+jealous,"Report of extent that participant experienced feeling ""jealous"" after completing the task","1 = ""not at all""; 7 = ""extremely"""
+ls_1,In most ways my life is close to my ideal.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+ls_2,The conditions of my life are excellent.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+ls_3,I am satisfied with my life.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+ls_4,So far I have gotten the important things I want in life.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+ls_5,"If I could live my life over, I would change almost nothing.","1 = ""strongly disagree""; 7 = ""strongly agree"""
+circle_task,Report of which circle size represents how large or small the participant feels about themselves.,1 = small; 7 = large
+color_task_red_6,"Report of how ""red"" the displayed color is",0 = not at all; 5 = moderately; 10 = extremely
+color_task_yellow_1,"Report of how ""yellow"" the displayed color is",0 = not at all; 5 = moderately; 10 = extremely
+color_task_blue_1,"Report of how ""blue"" the displayed color is",0 = not at all; 5 = moderately; 10 = extremely
+ladder,Report of what ladder rung represents how good the participant sees their life as.,"0 = worst, 10 = best"
+self_image,Report of which stick figure size best describes themselves.,1 = small; 7 = large
+signature,Report of which signature size best describes themselves.,1 = small; 7 = large
+gratitude_1,I have so much in life to be thankful for.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+gratitude_2,"If I had to list everything that I felt grateful for, it would be a very long list.","1 = ""strongly disagree""; 7 = ""strongly agree"""
+gratitude_3,"When I look at the world, I don't see much to be grateful for. (reverse coded)","1 = ""strongly disagree""; 7 = ""strongly agree"""
+gratitude_4,I am grateful to a wide variety of people.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+gratitude_5,"As I get older, I find myself more able to appreciate the people, events, and situations that have been part of my life history.","1 = ""strongly disagree""; 7 = ""strongly agree"""
+gratitude_6,Long amounts of time can go by before I feel grateful to something or someone. (reverse coded),"1 = ""strongly disagree""; 7 = ""strongly agree"""
+gratitude_frequency_1,"Thanked someone you didn’t know who did a small favor for you in public (for example, someone who opened a door for you).","0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_2,"Expressed appreciation to a service worker (for example, someone who works in a restaurant or a grocery store).","0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_3,Tried to return a favor to someone who did something nice for you.,"0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_4,Let your family and friends know that you appreciate them.,"0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_5,Helped someone because they had helped you in the past.,"0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_6,Made a point to not forget after someone had helped you.,"0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_7,Helped a coworker with a task because they had helped you before.,"0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_8,Complimented a friend who had done something nice for you.,"0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+gratitude_frequency_9,Told other people about a nice thing that someone else did for you.,"0 = Did not perform the behavior
+1 = Performed the behavior once
+2 = Performed the behavior more than once"
+belief_in_god,Which of these statements comes closest to describing your own belief in God?,"1 = I currently believe in God
+2 = I formerly believed in God, but no longer believe in God.
+3 = I have never believed in God"
+religious_grat_1,I have so much in life to be thankful to God for.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+religious_grat_2,"If I had to list everything that I felt grateful to God for, it would be a very long list.","1 = ""strongly disagree""; 7 = ""strongly agree"""
+religious_grat_3,"When I look at the world, I don’t see much to be grateful to God for. (reverse coded)","1 = ""strongly disagree""; 7 = ""strongly agree"""
+religious_grat_4,I am grateful to God.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+religious_grat_5,As I get older I find myself more able to appreciate that God has been part of my life history.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+religious_grat_6,Long amounts of time can go by before I feel grateful to God. (reverse coded),"1 = ""strongly disagree""; 7 = ""strongly agree"""
+RCI-10_1,I often read books and magazines about my faith.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_2,I make financial contributions to my religious organization.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_3,I spend time trying to grow in understanding of my faith.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_4,Religion is especially important to me because it answers many questions about the meaning of life.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_5,My religious beliefs lie behind my whole approach to life.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_6,I enjoy spending time with others of my religious affiliation.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_7,Religious beliefs influence all my dealings in life.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_8,It is important to me to spend periods of time in private religious thought and reflection.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_9,I enjoy working in the activities of my religious affiliation.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+RCI-10_10,I keep well informed about my local religious group and have some influence in its decisions.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+panas_interested,"Indicate the extent to which you have felt ""interested"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_excited,"Indicate the extent to which you have felt ""excited"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_active,"Indicate the extent to which you have felt ""active"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_strong,"Indicate the extent to which you have felt ""strong"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_attentive,"Indicate the extent to which you have felt ""attentive"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_determined,"Indicate the extent to which you have felt ""determined"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_inspired,"Indicate the extent to which you have felt ""inspired"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_enthusiastic,"Indicate the extent to which you have felt ""enthusiastic"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_proud,"Indicate the extent to which you have felt ""proud"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_alert,"Indicate the extent to which you have felt ""alert"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_hostile,"Indicate the extent to which you have felt ""hostile"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_irritable,"Indicate the extent to which you have felt ""irritable"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_ashamed,"Indicate the extent to which you have felt ""ashamed"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_scared,"Indicate the extent to which you have felt ""scared"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_nervous,"Indicate the extent to which you have felt ""nervous"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_guilty,"Indicate the extent to which you have felt ""guilty"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_upset,"Indicate the extent to which you have felt ""upset"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_jittery,"Indicate the extent to which you have felt ""jittery"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_distressed,"Indicate the extent to which you have felt ""distressed"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+panas_afraid,"Indicate the extent to which you have felt ""afraid"" over the past week.","1 = ""Very slightly or not at all""; 5 = ""Extremely"""
+envy_1,I like to make people feel bad when something good has happened to them.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+envy_2,I wouldn’t want to trade places with anyone.  (reverse coded),"1 = ""strongly disagree""; 7 = ""strongly agree"""
+envy_3,I feel angry when others succeed. ,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+envy_4,It brings me happiness to see my friends succeed. (reverse coded),"1 = ""strongly disagree""; 7 = ""strongly agree"""
+envy_5,I’m content with what I’ve got.  (reverse coded),"1 = ""strongly disagree""; 7 = ""strongly agree"""
+envy_6,I am happy when others succeed even when I don’t.  (reverse coded),"1 = ""strongly disagree""; 7 = ""strongly agree"""
+envy_7,It pains me to think of the success of my friends.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+envy_8,I would rather see someone I don’t know win a lottery than to see an acquaintance win.,"1 = ""strongly disagree""; 7 = ""strongly agree"""
+primal_belief_1,Most things in the world are good.,
+primal_belief_2,"In life, there’s way more beauty than ugliness.","1 = ""strongly disagree""; 5 = ""strongly agree"""
+primal_belief_3,Most things have a habit of getting worse. (reverse coded),"1 = ""strongly disagree""; 5 = ""strongly agree"""
+primal_belief_4,"On the whole, the world is an uncomfortable and unpleasant place. (reverse coded)","1 = ""strongly disagree""; 5 = ""strongly agree"""
+primal_belief_5,Good things in the world outweigh the bad things.,"1 = ""strongly disagree""; 5 = ""strongly agree"""
+primal_belief_6,"On the whole, the world is a bad place. (reverse coded)","1 = ""strongly disagree""; 5 = ""strongly agree"""
+number_attention,Attention check,6 (Correct answer)
+sex,Participant's gender identity,"1 = Male
+2 = Female
+3 = Non-binary
+4 = Prefer not to answer"
+age,What is your age in years?,
+race_1,Would you consider yourself Hispanic or Latino?,"1 = Yes
+2 = No"
+race_2,Please select the term below that best describes your racial identity:,"1 = American Indian/Alaskan Native
+2 = Asian
+3 = Native Hawaiian or other Pacific Islander
+4 = Black or African American
+5 = White
+6 = More than one race
+7 = Other
+8 = Prefer not to answer"
+race_3,What race do you identify as?,
+religion,Please select the term below that best describes your religious affiliation:,"1 = Christian
+2 = Catholic
+3 = Mormon
+4 = Jewish
+5 = Muslim
+6 = Buddhist
+7 = Hindu
+8 = Atheist
+9 = Agnostic
+10 = Spiritual
+11 = Other
+12 = Prefer not answer"
+religion_other,What religion do you consider yourself affiliated with?,
+religion_freq,How often do you attend religious services?,"1 = Seldom/Never
+2 = Several times a year
+3 = Once or twice a month
+4 = At least once a week
+5 = More than once a week"
+education,How many years of formal education do you have?,"1 = Less than high school degree
+2 = High school graduate (high school diploma or equivalent including GED)
+3 = Some college but no degree
+4 = Associate degree in college (2-year)
+5 = Bachelor's degree in college (4-year)
+6 = Master's degree
+7 = Doctoral degree
+8 = Professional degree (JD, MD)"
+social_class,How would you rate your social class?,"1 = lower/working
+2 = lower middle
+3 = middle
+4 = upper middle
+5 = upper
+6 = prefer not "
+sex_orientation,Please select the term below that best describes your sexuality:,"1 = Heterosexual (straight)
+2 = Homosexual (gay)
+3 = Bisexual
+4 = Asexual/Aromantic
+5 = Other
+6 = Prefer not to say"
+marital_status,Which of the following best describes your current marital status?,"1 = Never married
+2 = Married/In a domestic partnership
+3 = Widowed
+4 = Divorced
+5 = Other "
+meals_attention,Attention check,4 (Correct Answer)
+attention_check,How much attention did you pay to this study?,"1 = Almost none
+2 = Very little
+3 = Some
+4 = A lot
+5 = Almost all "
+goal_check,What do you think this study was about?,
+hypothesis_check,What hypothesis/hypotheses do you think we were testing in study?,
+intervention_check,"Before participating in our study today, had you ever taken part in an activity (for example, keeping a gratitude journal) designed to make you feel more grateful?","1 = Yes
+2 = No "
+intervention_check_2,Do you think it worked?,"1 = Yes
+2 = No "
+intervention_check_3,"In general, do you think activities like keeping a gratitude journal help people feel happier and more satisfied with life?<br>","1 = Yes
+2 = No 
+3 = Not sure"
+ai,AI check,"1 = Yes
+2 = No "
+copy_paste,Copy paste check,"1 = Yes
+2 = No "
+copy_paste_no,Elaborating on AI and copy paste check,
+feedback,Feedback on the survey,
+PROLIFIC_PID,Prolific ID,
+condition,Name of the condition assigned,"1 = measurement only (control) 
+2 = events list (control)
+3 = interesting events list (control)
+4 = hassles list (control)
+5 = gratitude list (intervention)
+6 = gratitude letter (intervention)
+7 = gratitude text (intervention)
+8 = Hong Kong list/Naikan gratitude list (intervention)
+9 = Singapore/mental subtraction task (intervention)
+10 = gratitude to God list (intervention)
+11 = gratitude to God letter (intervention)"
+condition_type,Type of the condition assigned,"1 = control
+2 = intervention"
+worktimeArray,An ordered array of the total time spent both on and off task,
+tasktime,How much time a participant spent on the survey,
+WorktimeArray,An ordered array of the total time spent both on and off task,
+offTask,An ordered array of the time spent off task; each item in the array represents a separate time the subjects’ cursor left the work space and the amount of time the subject spent off task,
+onTask,An ordered array of the time spent on task; each item in the array represents a separate time the subjects’ cursor entered the workspace and the amount of time the subject spent within the task window,
+totalOffTask,The total amount of time spent off task,
+totalOnTask,The total amount of time on task (without subtracting time spent off task),
+perPagePT,Page breaks between pages,
+pageNo,How many pages the participant saw,
