@@ -77,7 +77,7 @@ control_3_ef_2 <- effsize::cohen.d(control_2$gratitude_all, grat_text_2$gratitud
 control_4_ef_2 <- effsize::cohen.d(control_2$gratitude_all, grat_hk_2$gratitude_all, hedges.correction = TRUE)
 control_5_ef_2 <- effsize::cohen.d(control_2$gratitude_all, grat_sing_2$gratitude_all, hedges.correction = TRUE)
 control_6_ef_2 <- effsize::cohen.d(control_2$gratitude_all, grat_god_list_2$gratitude_all, hedges.correction = TRUE)
-control_7_ef_2 <- effsize::cohen.d(control_2$gratitude_all, grat_god_list_2$gratitude_all, hedges.correction = TRUE)
+control_7_ef_2 <- effsize::cohen.d(control_2$gratitude_all, grat_god_letter_2$gratitude_all, hedges.correction = TRUE)
   
 con_1_ef_2 <- effsize::cohen.d(control_2$gratitude_all, control_events_2$gratitude_all, hedges.correction = TRUE)
 con_2_ef_2 <- effsize::cohen.d(control_2$gratitude_all, control_interesting_2$gratitude_all, hedges.correction = TRUE)
@@ -239,7 +239,7 @@ control_3_ef_2 <- effsize::cohen.d(control_2$happy_all, grat_text_2$happy_all, h
 control_4_ef_2 <- effsize::cohen.d(control_2$happy_all, grat_hk_2$happy_all, hedges.correction = TRUE)
 control_5_ef_2 <- effsize::cohen.d(control_2$happy_all, grat_sing_2$happy_all, hedges.correction = TRUE)
 control_6_ef_2 <- effsize::cohen.d(control_2$happy_all, grat_god_list_2$happy_all, hedges.correction = TRUE)
-control_7_ef_2 <- effsize::cohen.d(control_2$happy_all, grat_god_list_2$happy_all, hedges.correction = TRUE)
+control_7_ef_2 <- effsize::cohen.d(control_2$happy_all, grat_god_letter_2$happy_all, hedges.correction = TRUE)
   
 con_1_ef_2 <- effsize::cohen.d(control_2$happy_all, control_events_2$happy_all, hedges.correction = TRUE)
 con_2_ef_2 <- effsize::cohen.d(control_2$happy_all, control_interesting_2$happy_all, hedges.correction = TRUE)
@@ -381,7 +381,7 @@ control_3_ef_2 <- effsize::cohen.d(control_2$sad_all, grat_text_2$sad_all, hedge
 control_4_ef_2 <- effsize::cohen.d(control_2$sad_all, grat_hk_2$sad_all, hedges.correction = TRUE)
 control_5_ef_2 <- effsize::cohen.d(control_2$sad_all, grat_sing_2$sad_all, hedges.correction = TRUE)
 control_6_ef_2 <- effsize::cohen.d(control_2$sad_all, grat_god_list_2$sad_all, hedges.correction = TRUE)
-control_7_ef_2 <- effsize::cohen.d(control_2$sad_all, grat_god_list_2$sad_all, hedges.correction = TRUE)
+control_7_ef_2 <- effsize::cohen.d(control_2$sad_all, grat_god_letter_2$sad_all, hedges.correction = TRUE)
 
 con_1_ef_2 <- effsize::cohen.d(control_2$sad_all, control_events_2$sad_all, hedges.correction = TRUE)
 con_2_ef_2 <- effsize::cohen.d(control_2$sad_all, control_interesting_2$sad_all, hedges.correction = TRUE)
@@ -515,7 +515,7 @@ control_3_ef_2 <- effsize::cohen.d(control_2$ls_total, grat_text_2$ls_total, hed
 control_4_ef_2 <- effsize::cohen.d(control_2$ls_total, grat_hk_2$ls_total, hedges.correction = TRUE)
 control_5_ef_2 <- effsize::cohen.d(control_2$ls_total, grat_sing_2$ls_total, hedges.correction = TRUE)
 control_6_ef_2 <- effsize::cohen.d(control_2$ls_total, grat_god_list_2$ls_total, hedges.correction = TRUE)
-control_7_ef_2 <- effsize::cohen.d(control_2$ls_total, grat_god_list_2$ls_total, hedges.correction = TRUE)
+control_7_ef_2 <- effsize::cohen.d(control_2$ls_total, grat_god_letter_2$ls_total, hedges.correction = TRUE)
 
 con_1_ef_2 <- effsize::cohen.d(control_2$ls_total, control_events_2$ls_total, hedges.correction = TRUE)
 con_2_ef_2 <- effsize::cohen.d(control_2$ls_total, control_interesting_2$ls_total, hedges.correction = TRUE)
