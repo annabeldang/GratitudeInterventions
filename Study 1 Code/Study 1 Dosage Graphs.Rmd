@@ -10,9 +10,13 @@ output:
 
 ```{r libraries}
 
+install.packages("tidyverse")
 library(tidyverse)
+install.packages("patchwork")
 library(patchwork)
+install.packages("scales")
 library(scales)
+install.packages("here")
 library(here)
 
 ```

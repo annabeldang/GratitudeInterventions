@@ -9,12 +9,17 @@ date: "2024-04-10"
 
 ```{r setup, include=FALSE}
 
+install.packages("tidyverse")
 library(tidyverse)
+install.packages("patchwork")
 library(patchwork)
+install.packages("scales")
 library(scales)
+install.packages("here")
 library(here)
 
 ```
+
 ```{r setup}
 # specify directory
 i_am("Study 2 Code/Study 2 Dosage Graph.Rmd")

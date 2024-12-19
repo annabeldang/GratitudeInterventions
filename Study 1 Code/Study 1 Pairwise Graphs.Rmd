@@ -7,9 +7,13 @@ date: "2024-04-10"
 
 ```{r libraries}
 
+install.packages("tidyverse")
 library(tidyverse)
+install.packages("patchwork")
 library(patchwork)
+install.packages("scales")
 library(scales)
+install.packages("here")
 library(here)
 
 ```
@@ -142,7 +146,8 @@ gratitude_y_range <- range(gratitude_data$gratitude_mean)
 gratitude_effect_size_range <- range(gratitude_data$gratitude_ef)
 
 # Scale effect sizes to match y-axis range
-gratitude_scaled_effect_sizes <- rescale(gratitude_data$gratitude_ef, to = gratitude_y_range)
+gratitude_scaled_effect_sizes <- scales::rescale(gratitude_data$gratitude_ef, 
+                                                  to = gratitude_y_range)
 ```
 ```{r gratitude graph}
 
@@ -174,8 +179,10 @@ gratitude_graph <- ggplot(gratitude_data, aes(x = ordered_condition_name, y = gr
                     labels = unique(gratitude_data$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              
                              override.aes = list(color = "black", size = 1))) +
-  scale_y_continuous(labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1),
-                     sec.axis = sec_axis(~ rescale(., from = gratitude_y_range, to = gratitude_effect_size_range), name = "Effect Size", labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1))) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1),
+                     sec.axis = sec_axis(trans = ~ ( . - min(gratitude_y_range)) / diff(gratitude_y_range) * diff(gratitude_effect_size_range) + min(gratitude_effect_size_range),
+                                         name = "Effect Size", 
+                                         labels = scales::number_format(accuracy = 0.1))) + 
   geom_segment(aes(x = 0.5, xend = 1.4, y = 2.0, yend = 2.0), color = "black", size = 0.5) + 
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
   geom_segment(aes(x = 1.4, xend = 1.4, y = 1.9, yend = 2.0), color = "black", size = 0.5) +
@@ -284,7 +291,8 @@ happy_y_range <- range(happy_data$happy_mean)
 happy_effect_size_range <- range(happy_data$happy_ef)
 
 # Scale effect sizes to match y-axis range
-happy_scaled_effect_sizes <- rescale(happy_data$happy_ef, to = happy_y_range)
+happy_scaled_effect_sizes <- scales::rescale(happy_data$happy_ef, 
+                                                  to = happy_y_range)
 ```
 ```{r happy graph}
 
@@ -314,11 +322,10 @@ happy_graph <- ggplot(happy_data, aes(x = ordered_condition_name, y = happy_mean
   ) +  scale_fill_manual(values = unique(happy_data$condition_color),
                     labels = unique(happy_data$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
-  scale_y_continuous(labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1),
-                     sec.axis = sec_axis(~ rescale(., from = happy_y_range, to = happy_effect_size_range),
-                                         name = "Effect Size",  
-                                         labels = scales::number_format(accuracy = 0.1, decimal.mark = ".", scale = 1))) +
-  
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1),
+                     sec.axis = sec_axis(trans = ~ ( . - min(happy_y_range)) / diff(happy_y_range) * diff(happy_effect_size_range) + min(happy_effect_size_range),
+                                         name = "Effect Size", 
+                                         labels = scales::number_format(accuracy = 0.1))) + 
   geom_segment(aes(x = 0.5, xend = 1.45, y = 1.2, yend = 1.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 0.5, xend = 0.5, y = 1.1, yend = 1.2), color = "black", size = 0.5) +
   geom_segment(aes(x = 1.45, xend = 1.45, y = 1.1, yend = 1.2), color = "black", size = 0.5)+
@@ -425,7 +432,8 @@ sad_y_range <- range(sad_data$sad_mean)
 sad_effect_size_range <- range(sad_data$sad_ef)
 
 # Scale effect sizes to match y-axis range
-sad_scaled_effect_sizes <- rescale(sad_data$sad_ef, to = sad_y_range)
+sad_scaled_effect_sizes <- scales::rescale(sad_data$sad_ef, 
+                                                  to = sad_y_range)
 ```
 ```{r sad graph}
 
@@ -455,7 +463,10 @@ sad_graph <- ggplot(sad_data, aes(x = ordered_condition_name, y = sad_mean, fill
   ) +  scale_fill_manual(values = unique(sad_data$condition_color),
                     labels = unique(sad_data$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
-  scale_y_continuous(sec.axis = sec_axis(~ rescale(.,from = sad_y_range,to = sad_effect_size_range), name = "Effect Size", labels = scales::number_format(accuracy = 0.1))) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1),
+                     sec.axis = sec_axis(trans = ~ ( . - min(sad_y_range)) / diff(sad_y_range) * diff(sad_effect_size_range) + min(sad_effect_size_range),
+                                         name = "Effect Size", 
+                                         labels = scales::number_format(accuracy = 0.1))) + 
   
   geom_segment(aes(x = 0.5, xend = 5.5, y = 0.6, yend = 0.6), color = "black", size = 0.5) +
   geom_segment(aes(x = 0.5, xend = 0.5, y = 0.55, yend = 0.6), color = "black", size = 0.5) +
@@ -554,7 +565,8 @@ ls_y_range <- range(ls_data$ls_mean)
 ls_effect_size_range <- range(ls_data$ls_ef)
 
 # Scale effect sizes to match y-axis range
-ls_scaled_effect_sizes <- rescale(ls_data$ls_ef, to = ls_y_range)
+ls_scaled_effect_sizes <- scales::rescale(ls_data$ls_ef, 
+                                                  to = ls_y_range)
 ```
 ```{r ls graph}
 
@@ -584,7 +596,10 @@ ls_graph <- ggplot(ls_data, aes(x = ordered_condition_name, y = ls_mean, fill = 
   scale_fill_manual(values = unique(ls_data$condition_color),
                     labels = unique(ls_data$ordered_condition_name)) +
   guides(fill = guide_legend(title = "Condition",                              override.aes = list(color = "black", size = 1))) +
-  scale_y_continuous(sec.axis = sec_axis(~ rescale(.,from = ls_y_range,to = ls_effect_size_range), name = "Effect Size",  labels = scales::number_format(accuracy = 0.1))) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 0.1),
+                     sec.axis = sec_axis(trans = ~ ( . - min(ls_y_range)) / diff(ls_y_range) * diff(ls_effect_size_range) + min(ls_effect_size_range),
+                                         name = "Effect Size", 
+                                         labels = scales::number_format(accuracy = 0.1))) + 
   
   geom_segment(aes(x = 0.5, xend = 1.5, y = 0.55, yend = 0.55), color = "black", size = 0.5) +
   geom_segment(aes(x = 0.5, xend = 0.5, y = 0.5, yend = 0.55), color = "black", size = 0.5) +
