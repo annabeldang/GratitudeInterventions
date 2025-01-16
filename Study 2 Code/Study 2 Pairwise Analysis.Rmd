@@ -1,0 +1,2466 @@
+---
+title: "Gratitude Interventions Study 2 Pairwise Analysis"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+date: "2024-04-10"
+---
+
+#Libraries
+```{r packages}
+
+library(effsize)
+library(compute.es)
+library(ggsignif)
+library(tidyverse)
+library(psych)
+library(here)
+
+```
+
+#Categories
+
+```{r setup}
+# specify directory
+i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
+
+#Set up
+
+data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
+
+# process data
+data <- data %>%
+  # remove incomplete or test observations
+  filter(Finished != "0", condition !="NA") %>%
+  select("StartDate":"pageNo")
+```
+
+```{r measures}
+data$gratitude_all <- rowMeans(data[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
+mean(data$gratitude_all)
+sd(data$gratitude_all)
+grat_omega <- omega(data[, c("grateful", "appreciative", "thankful")])
+print(grat_omega)
+
+data$happy_all <- rowMeans(data[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
+mean(data$happy_all)
+sd(data$happy_all)
+happy_omega <- omega(data[, c("happy", "satisfied", "content", "joyful", "pleased")])
+print(happy_omega)
+
+data$optimistic_all <- rowMeans(data[, c("optimistic", "hopeful")], na.rm = TRUE)
+mean(data$optimistic_all)
+sd(data$optimistic_all)
+optimistic_omega <- data[, c("optimistic", "hopeful")]
+optimistic_omega <- omega(optimistic_omega, nfactors = 1)
+print(optimistic_omega)
+
+data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious", "nervous")], na.rm = TRUE)
+mean(data$sad_all)
+sd(data$sad_all)
+sad_omega <- omega(data[, c("sad", "depressed", "anxious", "nervous")])
+print(sad_omega)
+
+data$indebted_all <- rowMeans(data[, c("indebted", "obligated")], na.rm = TRUE)
+mean(data$indebted_all)
+sd(data$indebted_all)
+indebted_omega <- data[, c("indebted", "obligated")]
+indebted_omega <- omega(indebted_omega, nfactors = 1)
+print(indebted_omega)
+
+mean(data$guilty)
+sd(data$guilty)
+
+data$envy_all <- rowMeans(data[, c("envious", "bitter", "jealous")], na.rm = TRUE)
+mean(data$envy_all)
+sd(data$envy_all)
+envy_omega <- data[, c("envious", "bitter", "jealous")]
+envy_omega <- omega(envy_omega, nfactors = 1)
+print(envy_omega)
+
+data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
+mean(data$ls_total)
+sd(data$ls_total)
+ls_omega <- data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")]
+ls_omega <- omega(ls_omega)
+print(ls_omega)
+
+data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
+mean(data$sc_total)
+sd(data$sc_total)
+sc_omega <- data[, c("sc_1", "sc_2", "sc_3")]
+sc_omega <- omega(sc_omega)
+print(sc_omega)
+
+mean(data$ladder, na.rm = TRUE)
+sd(data$ladder, na.rm = TRUE)
+
+data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+mean(data$self_image_total)
+sd(data$self_image_total)
+self_image_omega <- data[, c("circle_task", "self_image", "signature")]
+self_image_omega <- omega(self_image_omega)
+print(self_image_omega)
+```
+
+```{r participant statistics}
+
+data_2 <- data_2 %>%
+  mutate(sex_name = case_when(
+    sex == 1 ~ "male",
+    sex == 2 ~ "female",
+    sex == 3 ~ "other"
+  ))
+
+data_2 %>%
+  group_by(sex_name) %>%
+  summarise(sex_count = n())
+
+mean(data_2$age)
+sd(data_2$age)
+
+```
+
+```{r categories}
+#Conditions
+
+control <- subset(data, condition == 1)
+control_events <- subset(data, condition == 2)
+control_interesting <- subset(data, condition == 3)
+control_hassles <- subset(data, condition == 4)
+
+grat_list <- subset(data, condition == 5)
+grat_letter <- subset(data, condition == 6)
+grat_text <- subset(data, condition == 7)
+grat_hk <- subset(data, condition == 8)
+grat_sing <- subset(data, condition == 9)
+grat_god_list <- subset(data, condition == 10)
+grat_god_letter <- subset(data, condition == 11)
+
+```
+
+#t-Tests (State Gratitude)
+
+```{r measurement only (gratitude)}
+# Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$gratitude_all,
+  "Gratitude Letter" = grat_letter$gratitude_all,
+  "Gratitude Text" = grat_text$gratitude_all,
+  "Chan Gratitude List" = grat_hk$gratitude_all,
+  "Mental Subtraction Task" = grat_sing$gratitude_all, 
+  "Gratitude to God List" = grat_god_list$gratitude_all, 
+  "Gratitude to God Letter" = grat_god_letter$gratitude_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$gratitude_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$gratitude_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r events (gratitude)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$gratitude_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$gratitude_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (gratitude)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$gratitude_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$gratitude_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r hassles (gratitude)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$gratitude_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$gratitude_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r gratitude conditions (gratitude)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+
+```{r control conditions (gratitude)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$gratitude_all,
+  "Events List" = control_events$gratitude_all,
+  "Interesting Events Text" = control_interesting$gratitude_all,
+  "Hassles List" = control_hassles$gratitude_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+#t-Tests (State PA)
+
+```{r measurement only (pa)}
+# Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$happy_all,
+  "Gratitude Letter" = grat_letter$happy_all,
+  "Gratitude Text" = grat_text$happy_all,
+  "Chan Gratitude List" = grat_hk$happy_all,
+  "Mental Subtraction Task" = grat_sing$happy_all, 
+  "Gratitude to God List" = grat_god_list$happy_all, 
+  "Gratitude to God Letter" = grat_god_letter$happy_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$happy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$happy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r events (pa)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$happy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$happy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (pa)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$happy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$happy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r hassles (pa)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$happy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$happy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r gratitude conditions (pa)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r control conditions (pa)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$happy_all,
+  "Events List" = control_events$happy_all,
+  "Interesting Events Text" = control_interesting$happy_all,
+  "Hassles List" = control_hassles$happy_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+
+#t-Tests (State Optimism)
+
+```{r measurement only (optimism)}
+# Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$optimistic_all,
+  "Gratitude Letter" = grat_letter$optimistic_all,
+  "Gratitude Text" = grat_text$optimistic_all,
+  "Chan Gratitude List" = grat_hk$optimistic_all,
+  "Mental Subtraction Task" = grat_sing$optimistic_all, 
+  "Gratitude to God List" = grat_god_list$optimistic_all, 
+  "Gratitude to God Letter" = grat_god_letter$optimistic_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$optimistic_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$optimistic_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r events (optimism)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$optimistic_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$optimistic_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (optimism)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$optimistic_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$optimistic_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r hassles (optimism)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$optimistic_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$optimistic_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r gratitude conditions (optimism)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r control conditions (optimism)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$optimistic_all,
+  "Events List" = control_events$optimistic_all,
+  "Interesting Events Text" = control_interesting$optimistic_all,
+  "Hassles List" = control_hassles$optimistic_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+
+
+
+#t-Tests (State NA)
+```{r measurement only (na)}
+# Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$sad_all,
+  "Gratitude Letter" = grat_letter$sad_all,
+  "Gratitude Text" = grat_text$sad_all,
+  "Chan Gratitude List" = grat_hk$sad_all,
+  "Mental Subtraction Task" = grat_sing$sad_all, 
+  "Gratitude to God List" = grat_god_list$sad_all, 
+  "Gratitude to God Letter" = grat_god_letter$sad_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$sad_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$sad_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+
+```{r events (na)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$sad_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$sad_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (na)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$sad_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$sad_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r hassles (na)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$sad_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$sad_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r gratitude conditions (na)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r control conditions (na)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$sad_all,
+  "Events List" = control_events$sad_all,
+  "Interesting Events Text" = control_interesting$sad_all,
+  "Hassles List" = control_hassles$sad_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+#t-Tests (State Indebtedness)
+
+```{r measurement only (indebted)}
+# Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$indebted_all,
+  "Gratitude Letter" = grat_letter$indebted_all,
+  "Gratitude Text" = grat_text$indebted_all,
+  "Chan Gratitude List" = grat_hk$indebted_all,
+  "Mental Subtraction Task" = grat_sing$indebted_all, 
+  "Gratitude to God List" = grat_god_list$indebted_all, 
+  "Gratitude to God Letter" = grat_god_letter$indebted_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$indebted_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$indebted_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r events (indebted)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$indebted_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$indebted_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (indebted)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$indebted_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$indebted_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+
+
+```{r hassles (indebted)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$indebted_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$indebted_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r gratitude conditions (indebted)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r control conditions (indebted)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$indebted_all,
+  "Events List" = control_events$indebted_all,
+  "Interesting Events Text" = control_interesting$indebted_all,
+  "Hassles List" = control_hassles$indebted_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+#t-Tests (State Guilt)
+
+```{r measurement only (guilt)}
+# Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$guilty,
+  "Gratitude Letter" = grat_letter$guilty,
+  "Gratitude Text" = grat_text$guilty,
+  "Chan Gratitude List" = grat_hk$guilty,
+  "Mental Subtraction Task" = grat_sing$guilty, 
+  "Gratitude to God List" = grat_god_list$guilty, 
+  "Gratitude to God Letter" = grat_god_letter$guilty
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$guilty, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$guilty, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r events (guilt)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$guilty, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$guilty, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (guilt)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$guilty, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$guilty, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r hassles (guilt)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$guilty, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$guilty, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r gratitude conditions (guilt)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r control conditions (guilt)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$guilty,
+  "Events List" = control_events$guilty,
+  "Interesting Events Text" = control_interesting$guilty,
+  "Hassles List" = control_hassles$guilty
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+
+
+#t-Tests (State Envy)
+
+```{r measurement only (envy)}
+# Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$envy_all,
+  "Gratitude Letter" = grat_letter$envy_all,
+  "Gratitude Text" = grat_text$envy_all,
+  "Chan Gratitude List" = grat_hk$envy_all,
+  "Mental Subtraction Task" = grat_sing$envy_all, 
+  "Gratitude to God List" = grat_god_list$envy_all, 
+  "Gratitude to God Letter" = grat_god_letter$envy_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$envy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$envy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r events (envy)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$envy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$envy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (envy)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$envy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$envy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r hassles (envy)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$envy_all, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$envy_all, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r gratitude conditions (envy)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+```{r control conditions (envy)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$envy_all,
+  "Events List" = control_events$envy_all,
+  "Interesting Events Text" = control_interesting$envy_all,
+  "Hassles List" = control_hassles$envy_all
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+```
+
+#t-Tests (Life Satisfaction)
+
+```{r measurement only (life satisfaction)}
+
+#Create a list of datasets to compare
+  grat_datasets <- list(
+    "Gratitude List" = grat_list$ls_total,
+    "Gratitude Letter" = grat_letter$ls_total,
+    "Gratitude Text" = grat_text$ls_total,
+    "Chan Gratitude List" = grat_hk$ls_total,
+    "Mental Subtraction Task" = grat_sing$ls_total, 
+    "Gratitude to God List" = grat_god_list$ls_total, 
+    "Gratitude to God Letter" = grat_god_letter$ls_total
+  )
+    # Create an empty dataframe to store results
+  results_df <- data.frame(Test = character(),
+                           P_Value = numeric(),
+                           Estimate = numeric(),
+                           Statistic = numeric(),
+                           Parameter = numeric(),
+                           stringsAsFactors = FALSE)
+  
+# Loop through each dataset and perform the comparison
+  for (i in seq_along(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control$ls_total, grat_datasets[[i]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control$ls_total, grat_datasets[[i]], hedges.correction = TRUE)
+    
+# Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+  
+# Display dataframe
+  print(results_df)
+```
+  
+```{r events (life satisfaction)}
+
+  # Create an empty dataframe to store results
+  results_df <- data.frame(Test = character(),
+                           P_Value = numeric(),
+                           Estimate = numeric(),
+                           Statistic = numeric(),
+                           Parameter = numeric(),
+                           stringsAsFactors = FALSE)
+  
+  # Loop through each dataset and perform the comparison
+  for (i in seq_along(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_events$ls_total, grat_datasets[[i]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_events$ls_total, grat_datasets[[i]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste("Events List vs.", names(grat_datasets)[i]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+  
+  # Display dataframe
+  print(results_df)
+
+```
+```{r interesting events (life satisfaction)}
+#Interesting Events
+
+  # Create an empty dataframe to store results
+  results_df <- data.frame(Test = character(),
+                           P_Value = numeric(),
+                           Estimate = numeric(),
+                           Statistic = numeric(),
+                           Parameter = numeric(),
+                           stringsAsFactors = FALSE)
+  
+  # Loop through each dataset and perform the comparison
+  for (i in seq_along(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_interesting$ls_total, grat_datasets[[i]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_interesting$ls_total, grat_datasets[[i]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+  
+  # Display dataframe
+  print(results_df)
+
+```
+  
+```{r hassles (life satisfaction)}
+
+  #Hassles
+  
+  # Create an empty dataframe to store results
+  results_df <- data.frame(Test = character(),
+                           P_Value = numeric(),
+                           Estimate = numeric(),
+                           Statistic = numeric(),
+                           Parameter = numeric(),
+                           stringsAsFactors = FALSE)
+  
+  # Loop through each dataset and perform the comparison
+  for (i in seq_along(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_hassles$ls_total, grat_datasets[[i]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_hassles$ls_total, grat_datasets[[i]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+  
+  # Display dataframe
+  print(results_df)
+
+```
+```{r gratitude conditions (life satisfaction)}
+  # Create an empty dataframe to store results
+  results_df <- data.frame(Test = character(),
+                           P_Value = numeric(),
+                           Estimate = numeric(),
+                           Statistic = numeric(),
+                           Parameter = numeric(),
+                           stringsAsFactors = FALSE)
+  
+  # Loop through each combination of datasets and perform the tests
+  for (i in 1:(length(grat_datasets) - 1)) {
+    for (j in (i + 1):length(grat_datasets)) {
+      # Perform t-test
+      t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+      # Calculate effect size
+      effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+      
+      # Add results to dataframe
+      results_df <- rbind(results_df, data.frame(
+        Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+        Statistic = t_test_result$statistic,
+        Parameter = t_test_result$parameter,
+        P_Value = t_test_result$p.value,
+        Estimate = effect_size$estimate
+      ))
+    }
+  }
+  
+  # Display dataframe
+  print(results_df)
+
+```
+```{r control conditions (life satisfaction)}
+  # Create a list of datasets to compare
+  control_datasets <- list(
+    "Measurement Only" = control$ls_total,
+    "Events List" = control_events$ls_total,
+    "Interesting Events Text" = control_interesting$ls_total,
+    "Hassles List" = control_hassles$ls_total
+  )
+  
+  # Create an empty dataframe to store results
+  results_df <- data.frame(Test = character(),
+                           P_Value = numeric(),
+                           Estimate = numeric(),
+                           Statistic = numeric(),
+                           Parameter = numeric(),
+                           stringsAsFactors = FALSE)
+  
+  # Loop through each combination of datasets and perform the tests
+  for (i in 1:(length(control_datasets) - 1)) {
+    for (j in (i + 1):length(control_datasets)) {
+      # Perform t-test
+      t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+      # Calculate effect size
+      effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+      
+      # Add results to dataframe
+      results_df <- rbind(results_df, data.frame(
+        Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+        Statistic = t_test_result$statistic,
+        Parameter = t_test_result$parameter,
+        P_Value = t_test_result$p.value,
+        Estimate = effect_size$estimate
+      ))
+    }
+  }
+  
+  # Display dataframe
+  print(results_df)
+
+```
+
+#t-Tests (Social Connection)
+
+```{r measurement only (social connection)}
+
+#Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$sc_total,
+  "Gratitude Letter" = grat_letter$sc_total,
+  "Gratitude Text" = grat_text$sc_total,
+  "Chan Gratitude List" = grat_hk$sc_total,
+  "Mental Subtraction Task" = grat_sing$sc_total, 
+  "Gratitude to God List" = grat_god_list$sc_total, 
+  "Gratitude to God Letter" = grat_god_letter$sc_total
+)
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$sc_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$sc_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+
+```{r events (social connection)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$sc_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$sc_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (social connection)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$sc_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$sc_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+
+```{r hassles (social connection)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$sc_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$sc_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r gratitude conditions (social connection)}
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r control conditions (social connection)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$sc_total,
+  "Events List" = control_events$sc_total,
+  "Interesting Events Text" = control_interesting$sc_total,
+  "Hassles List" = control_hassles$sc_total
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+
+```
+
+#t-Tests (Ladder)
+
+```{r measurement only (ladder)}
+
+#Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$ladder,
+  "Gratitude Letter" = grat_letter$ladder,
+  "Gratitude Text" = grat_text$ladder,
+  "Chan Gratitude List" = grat_hk$ladder,
+  "Mental Subtraction Task" = grat_sing$ladder, 
+  "Gratitude to God List" = grat_god_list$ladder, 
+  "Gratitude to God Letter" = grat_god_letter$ladder
+)
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$ladder, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$ladder, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+
+```{r events (ladder)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$ladder, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$ladder, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (ladder)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$ladder, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$ladder, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+
+```{r hassles (ladder)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$ladder, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$ladder, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r gratitude conditions (ladder)}
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r control conditions (ladder)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$ladder,
+  "Events List" = control_events$ladder,
+  "Interesting Events Text" = control_interesting$ladder,
+  "Hassles List" = control_hassles$ladder
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+
+```
+
+#t-Tests (Self Image)
+
+```{r measurement only (self image)}
+
+#Create a list of datasets to compare
+grat_datasets <- list(
+  "Gratitude List" = grat_list$self_image_total,
+  "Gratitude Letter" = grat_letter$self_image_total,
+  "Gratitude Text" = grat_text$self_image_total,
+  "Chan Gratitude List" = grat_hk$self_image_total,
+  "Mental Subtraction Task" = grat_sing$self_image_total, 
+  "Gratitude to God List" = grat_god_list$self_image_total, 
+  "Gratitude to God Letter" = grat_god_letter$self_image_total
+)
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control$self_image_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control$self_image_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+```
+
+```{r events (self image)}
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_events$self_image_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_events$self_image_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r interesting events (self image)}
+#Interesting Events
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_interesting$self_image_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_interesting$self_image_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+
+```{r hassles (self image)}
+
+#Hassles
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each dataset and perform the comparison
+for (i in seq_along(grat_datasets)) {
+  # Perform t-test
+  t_test_result <- t.test(control_hassles$self_image_total, grat_datasets[[i]])
+  # Calculate effect size
+  effect_size <- effsize::cohen.d(control_hassles$self_image_total, grat_datasets[[i]], hedges.correction = TRUE)
+  
+  # Add results to dataframe
+  results_df <- rbind(results_df, data.frame(
+    Test = paste("Hassles List vs.", names(grat_datasets)[i]),
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
+  ))
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r gratitude conditions (self image)}
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(grat_datasets) - 1)) {
+  for (j in (i + 1):length(grat_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(grat_datasets[[i]], grat_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(grat_datasets[[i]], grat_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+
+```
+```{r control conditions (self image)}
+# Create a list of datasets to compare
+control_datasets <- list(
+  "Measurement Only" = control$self_image_total,
+  "Events List" = control_events$self_image_total,
+  "Interesting Events Text" = control_interesting$self_image_total,
+  "Hassles List" = control_hassles$self_image_total
+)
+
+# Create an empty dataframe to store results
+results_df <- data.frame(Test = character(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Loop through each combination of datasets and perform the tests
+for (i in 1:(length(control_datasets) - 1)) {
+  for (j in (i + 1):length(control_datasets)) {
+    # Perform t-test
+    t_test_result <- t.test(control_datasets[[i]], control_datasets[[j]])
+    # Calculate effect size
+    effect_size <- effsize::cohen.d(control_datasets[[i]], control_datasets[[j]], hedges.correction = TRUE)
+    
+    # Add results to dataframe
+    results_df <- rbind(results_df, data.frame(
+      Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
+    ))
+  }
+}
+
+# Display dataframe
+print(results_df)
+
+```

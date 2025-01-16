@@ -1,0 +1,300 @@
+---
+title: " Study 2 Dosage Graphs"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+date: "2024-04-10"
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(patchwork)
+library(scales)
+library(here)
+
+```
+```{r setup}
+# specify directory
+i_am("Study 2 Code/Study 2 Dosage Graph.Rmd")
+
+#Set up
+
+data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
+
+# process data
+data_2 <- data_2 %>%
+  # remove incomplete or test observations
+  filter(Finished != "0", condition !="NA") %>%
+  select("StartDate":"pageNo")
+```
+
+
+```{r measures}
+
+data_2$gratitude_all <- rowMeans(data_2[, c("grateful", "thankful", "appreciative")], na.rm = TRUE)
+data_2$happy_all <- rowMeans(data_2[, c("happy", "satisfied", "content", "joyful", "pleased")], na.rm = TRUE)
+data_2$optimistic_all <- rowMeans(data_2[, c("optimistic", "hopeful")], na.rm = TRUE)
+data_2$sad_all <- rowMeans(data_2[, c("sad", "depressed", "anxious", "nervous")], na.rm = TRUE)
+data_2$indebted_all <- rowMeans(data_2[, c("indebted", "obligated")], na.rm = TRUE)
+data_2$envy_all <- rowMeans(data_2[, c("envious", "bitter", "jealous")], na.rm = TRUE)
+
+data_2$ls_total <- rowMeans(data_2[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
+data_2$sc_total <- rowMeans(data_2[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
+data_2$self_image_total <- rowMeans(data_2[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
+
+```
+
+```{r categories}
+#Condition
+
+condition_color <- c(
+    "1" = "indianred",
+    "2" = "lightsalmon",
+    "3" = "lightgoldenrod",
+    "4" = "palegreen2",
+    "5" = "deepskyblue2",
+    "6" = "orchid",
+    "7" = "tan",
+    "8" = "lightblue",
+    "9" = "lightpink",
+    "10" = "darkgray",
+    "11" = "aquamarine")
+
+condition_name <- c(
+    "1" = "Measurement Only",
+    "2" = "Events List",
+    "3" = "Interesting Events List",
+    "4" = "Hassles List",
+    "5" = "Gratitude List",
+    "6" = "Gratitude Letter",
+    "7" = "Gratitude Text",
+    "8" = "Chan Gratitude List",
+    "9" = "Mental Subtraction Task",
+    "10" = "Gratitude to God List",
+    "11" = "Gratitude to God Letter")
+
+calculate_std_error <- function(condition_data)
+  return(sd(condition_data) / sqrt(length(condition_data)))
+
+```
+
+```{r gratitude}
+
+cond.means_1 <-data_2%>%group_by(condition)%>%summarize(Mean=mean(gratitude_all)) 
+print(cond.means_1)
+
+# Calculate mean for 'gratitude_all' by 'condition' and subtract a value
+cond.means_1 <- data_2 %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(gratitude_all)) %>%
+  mutate(Mean = Mean - 4.502193)
+
+print(cond.means_1)
+```
+```{r happy}
+happy_mean<-data_2%>%group_by(condition)%>%summarize(Mean=mean(happy_all)) 
+print(happy_mean)
+
+# Calculate mean for 'happy_all' by 'condition' and subtract a value
+cond.means_2 <- data_2 %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(happy_all)) %>%
+  mutate(Mean = Mean - 3.996053)
+
+# Calculate standard error for 'happy_all' by 'condition'
+std_errors <- data_2 %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(happy_all) / sqrt(n()))
+
+# Combine the dataframes
+dosage_data_2 <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  happy_mean = cond.means_2$Mean,
+  happy_se = std_errors$Standard_Error
+)
+
+dosage_data_2$condition <- factor(dosage_data_2$condition)
+
+happy_model <- model <- lm(gratitude_mean ~ happy_mean, data = dosage_data_2)
+print(happy_model)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ happy_mean, data = dosage_data_2)
+summary(lm_model)
+
+# Calculate R-squared value
+r_squared <- summary(lm_model)$r.squared
+r_squared_happy_2 <- round(r_squared, 2)
+
+# Create scatter plot with linear regression line and R-squared
+happy_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = happy_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
+  geom_errorbar(aes(ymin = happy_mean - happy_se, ymax = happy_mean + happy_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 2",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported PA") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),  
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  # Add R-squared value
+  geom_text(aes(x = max(gratitude_mean), y = min(happy_mean), 
+                label = paste("R² =", r_squared_happy_2)),
+            hjust = 1, vjust = 0, color = "black", size = 3)
+
+# Print the plot
+print(happy_plot_2)
+```
+```{r sad}
+
+sad_mean<-data_2%>%group_by(condition)%>%summarize(Mean=mean(sad_all)) 
+print(sad_mean)
+
+# Calculate mean for 'sad_all' by 'condition' and subtract a value
+cond.means_2 <- data_2 %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(sad_all)) %>%
+  mutate(Mean = Mean - 2.740132)
+
+# Calculate standard error for 'sad_all' by 'condition'
+std_errors <- data_2 %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(sad_all) / sqrt(n()))
+
+# Combine the dataframes
+dosage_data_2 <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  sad_mean = cond.means_2$Mean,
+  sad_se = std_errors$Standard_Error
+)
+
+dosage_data_2$condition <- factor(dosage_data_2$condition)
+
+# Fit linear regression model
+lm_model <- lm(gratitude_mean ~ sad_mean, data = dosage_data_2)
+summary(lm_model)
+
+# Calculate R-squared value
+r_squared <- summary(lm_model)$r.squared
+r_squared_sad_2 <- round(r_squared, 2)
+
+# Create scatter plot with linear regression line and R-squared
+sad_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = sad_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
+  geom_errorbar(aes(ymin = sad_mean - sad_se, ymax = sad_mean + sad_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 2",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported NA") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  # Add R-squared value
+  geom_text(aes(x = max(gratitude_mean), y = max(sad_mean), 
+                label = paste("R² =", r_squared_sad_2)),
+            hjust = 1, vjust = 1, color = "black", size = 3)
+
+# Print the plot
+print(sad_plot_2)
+```
+
+```{r life satisfaction}
+
+ls_mean<-data_2%>%group_by(condition)%>%summarize(Mean=mean(ls_total)) 
+print(ls_mean)
+
+# Calculate mean for 'ls_total' by 'condition' and subtract a value
+cond.means_2 <- data_2 %>%
+  group_by(condition) %>%
+  summarize(Mean = mean(ls_total)) %>%
+  mutate(Mean = Mean - 3.825000)
+
+# Calculate standard error for 'ls_total' by 'condition'
+std_errors <- data_2 %>%
+  group_by(condition) %>%
+  summarize(Standard_Error = sd(ls_total) / sqrt(n()))
+
+# Combine the dataframes
+dosage_data_2 <- data.frame(
+  condition = cond.means_1$condition,
+  gratitude_mean = cond.means_1$Mean,
+  ls_mean = cond.means_2$Mean,
+  ls_se = std_errors$Standard_Error
+)
+
+dosage_data_2$condition <- factor(dosage_data_2$condition)
+
+# Fit linear model
+lm_model <- lm(gratitude_mean ~ ls_mean, data = dosage_data_2)
+
+# Summary of linear model
+summary(lm_model)
+
+# Calculate R-squared value
+r_squared <- summary(lm_model)$r.squared
+r_squared_ls_2 <- round(r_squared, 2)
+
+# Create scatter plot with linear regression line and R-squared
+ls_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = ls_mean, color = condition)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "black", size = 0.5) +
+  geom_errorbar(aes(ymin = ls_mean - ls_se, ymax = ls_mean + ls_se), width = 0.1) +
+  scale_color_manual(values = condition_color, labels = condition_name, 
+                     name = "Condition") +
+  labs(title = "Study 2",
+       x = "Mean Self-Reported Gratitude",
+       y = "Mean Self-Reported Life Satisfaction") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  geom_text(aes(x = min(gratitude_mean), y = max(ls_mean), 
+                label = paste("R² =", r_squared_ls_2)),
+            hjust = 0, vjust = 1, color = "black", size = 3)
+
+# Print the plot
+print(ls_plot_2)
+```
+
+#Combined Graphs
+```{r combined graph}
+# Set theme settings for larger plots and smaller titles
+theme_settings <- list(
+  plot.title = theme(text = element_text(size = 8, face = "bold")),  # Adjust title size
+  axis.title = theme(text = element_text(size = 6))    # Adjust axis title size
+)
+
+# Combine the plots with adjusted theme settings
+combined_plot <- (
+  (happy_plot_2 + theme_settings + theme(legend.position = "none")) +
+  (sad_plot_2 + theme_settings + theme(legend.position = "none")) +
+  (ls_plot_2 + theme_settings + theme(legend.position = "right"))
+) + plot_layout(guides = "collect")  # Collect legends into one
+
+# Set the size of the plot
+options(repr.plot.width = 15, repr.plot.height = 13)  # Adjust width and height as needed
+
+# Print the combined plot
+print(combined_plot)
+
+```
+
