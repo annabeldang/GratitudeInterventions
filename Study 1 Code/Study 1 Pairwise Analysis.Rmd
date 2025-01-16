@@ -8,18 +8,13 @@ date: "2024-04-10"
 
 ```{r setup, include=FALSE}
 
-install.packages("effsize")
 library(effsize)
-install.packages("compute.es")
 library(compute.es)
-install.packages("ggsignif")
 library(ggsignif)
-install.packages("tidyverse")
 library(tidyverse)
-install.packages("psych")
 library(psych)
-install.packages("here")
 library(here)
+
 ```
 
 #Categories
@@ -120,7 +115,7 @@ self_image_omega <- data[, c("circle_task", "self_image", "signature")]
 self_image_omega <- omega(self_image_omega)
 print(self_image_omega)
 ```
-```{r participant t_statistics}
+```{r participant statistics}
 
 #Study 1.1
 study_1.1 <- study_1.1 %>%
@@ -217,10 +212,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -233,10 +228,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -248,10 +243,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -264,10 +259,10 @@ for (i in seq_along(grat_datasets)) {
 # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -280,10 +275,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -296,10 +291,10 @@ for (i in seq_along(grat_datasets)) {
 # Add results to dataframe
 results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -312,10 +307,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -328,10 +323,10 @@ for (i in seq_along(grat_datasets)) {
 # Add results to dataframe
 results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -342,10 +337,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -359,10 +354,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -383,10 +378,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -400,10 +395,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -426,10 +421,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -442,10 +437,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -457,10 +452,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -473,10 +468,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -489,10 +484,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -505,10 +500,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -521,10 +516,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -537,10 +532,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -551,10 +546,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -568,10 +563,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -590,10 +585,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -607,10 +602,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -634,10 +629,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -650,10 +645,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -665,10 +660,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -681,10 +676,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -697,10 +692,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -713,10 +708,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -729,10 +724,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -745,10 +740,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -759,10 +754,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -776,10 +771,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -798,10 +793,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -815,10 +810,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -843,10 +838,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -859,10 +854,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -875,10 +870,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -891,10 +886,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -907,10 +902,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -923,10 +918,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -939,10 +934,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -955,10 +950,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -969,10 +964,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -986,10 +981,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1008,10 +1003,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1025,10 +1020,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1051,10 +1046,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1067,10 +1062,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1082,10 +1077,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1098,10 +1093,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1114,10 +1109,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1130,10 +1125,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1148,10 +1143,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1164,10 +1159,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1178,10 +1173,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1195,10 +1190,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1217,10 +1212,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1234,10 +1229,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1260,10 +1255,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1276,10 +1271,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1291,10 +1286,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1307,10 +1302,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1323,10 +1318,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1339,10 +1334,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1355,10 +1350,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1371,10 +1366,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1385,10 +1380,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1402,10 +1397,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1424,10 +1419,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1441,10 +1436,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1468,10 +1463,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1484,10 +1479,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1499,10 +1494,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1515,10 +1510,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1531,10 +1526,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1547,10 +1542,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1563,10 +1558,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1579,10 +1574,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1593,10 +1588,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1610,10 +1605,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1632,10 +1627,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1649,10 +1644,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1675,10 +1670,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1691,10 +1686,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1707,10 +1702,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1723,10 +1718,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1739,10 +1734,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1755,10 +1750,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1771,10 +1766,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1787,10 +1782,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1801,10 +1796,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1818,10 +1813,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1840,10 +1835,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -1857,10 +1852,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -1889,10 +1884,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1905,10 +1900,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1920,10 +1915,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1936,10 +1931,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1952,10 +1947,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -1968,10 +1963,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -1985,10 +1980,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -2001,10 +1996,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -2015,10 +2010,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -2032,10 +2027,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -2054,10 +2049,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -2071,10 +2066,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -2101,10 +2096,10 @@ grat_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -2117,10 +2112,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Measurement Only vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -2132,10 +2127,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -2148,10 +2143,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -2164,10 +2159,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -2180,10 +2175,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Interesting Events List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -2196,10 +2191,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each dataset and perform the comparison
@@ -2212,10 +2207,10 @@ for (i in seq_along(grat_datasets)) {
   # Add results to dataframe
   results_df <- rbind(results_df, data.frame(
     Test = paste("Hassles List vs.", names(grat_datasets)[i]),
-    t_statistic = t_test_result$t_statistic,
-    df = t_test_result$df,
-    p_value = t_test_result$p.value,
-    effect_size = effect_size$effect_size
+    Statistic = t_test_result$statistic,
+    Parameter = t_test_result$parameter,
+    P_Value = t_test_result$p.value,
+    Estimate = effect_size$estimate
   ))
 }
 
@@ -2226,10 +2221,10 @@ print(results_df)
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -2243,10 +2238,10 @@ for (i in 1:(length(grat_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(grat_datasets)[i], "vs.", names(grat_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }
@@ -2265,10 +2260,10 @@ control_datasets <- list(
 
 # Create an empty dataframe to store results
 results_df <- data.frame(Test = character(),
-                         p_value = numeric(),
-                         effect_size = numeric(),
-                         t_statistic = numeric(),
-                         df = numeric(),
+                         P_Value = numeric(),
+                         Estimate = numeric(),
+                         Statistic = numeric(),
+                         Parameter = numeric(),
                          stringsAsFactors = FALSE)
 
 # Loop through each combination of datasets and perform the tests
@@ -2282,10 +2277,10 @@ for (i in 1:(length(control_datasets) - 1)) {
     # Add results to dataframe
     results_df <- rbind(results_df, data.frame(
       Test = paste(names(control_datasets)[i], "vs.", names(control_datasets)[j]),
-      t_statistic = t_test_result$t_statistic,
-      df = t_test_result$df,
-      p_value = t_test_result$p.value,
-      effect_size = effect_size$effect_size
+      Statistic = t_test_result$statistic,
+      Parameter = t_test_result$parameter,
+      P_Value = t_test_result$p.value,
+      Estimate = effect_size$estimate
     ))
   }
 }

@@ -10,13 +10,9 @@ output:
 
 ```{r libraries}
 
-install.packages("tidyverse")
 library(tidyverse)
-install.packages("patchwork")
 library(patchwork)
-install.packages("scales")
 library(scales)
-install.packages("here")
 library(here)
 
 ```
@@ -94,7 +90,7 @@ condition_name <- c(
     "5" = "Gratitude List",
     "6" = "Gratitude Letter",
     "7" = "Gratitude Text",
-    "8" = "Naikan Gratitude List",
+    "8" = "Chan Gratitude List",
     "9" = "Mental Subtraction Task")
 
 #Standard Error
@@ -113,7 +109,7 @@ print(cond.means_1)
 cond.means_1 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(gratitude_all)) %>%
-  mutate(Mean = Mean - 4.278177)
+  mutate(Mean = Mean - 4.27)
 
 ```
 ```{r happy}
@@ -125,7 +121,7 @@ print(happy_mean)
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(happy_all)) %>%
-  mutate(Mean = Mean - 3.948201)
+  mutate(Mean = Mean - 3.95)
 
 # Calculate standard error for 'happy_all' by 'condition'
 std_errors <- data %>%
@@ -161,18 +157,15 @@ happy_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = happy_mean, color 
        y = "Mean Self-Reported PA") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
-    axis.title = element_text(size = 8, face = "bold"),
-    axis.text = element_text(size = 6, face = "bold"),
-    legend.title = element_text(size = 8, face = "bold"),
-    legend.text = element_text(size = 6, face = "bold"),
+    plot.title = element_text(hjust = 0.5),  
+    legend.title = element_text(face = "bold"),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()
   ) +
   # Add R-squared value
-  geom_text(aes(x = min(gratitude_mean), y = max(happy_mean), 
+  geom_text(aes(x = max(gratitude_mean), y = min(happy_mean), 
                 label = paste("R² =", r_squared_happy)),
-            hjust = 0, vjust = 1, color = "black", size = 3, face = "bold")
+            hjust = 1, vjust = 0, color = "black", size = 3)
 
 # Display the plot
 print(happy_plot)
@@ -225,11 +218,8 @@ sad_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = sad_mean, color = co
        y = "Mean Self-Reported NA") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
-    axis.title = element_text(size = 8, face = "bold"),
-    axis.text = element_text(size = 6, face = "bold"),
-    legend.title = element_text(size = 8, face = "bold"),
-    legend.text = element_text(size = 6, face = "bold"),
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()
   ) +
@@ -245,17 +235,14 @@ print(sad_plot)
 ```{r life satisfaction}
 
 # Calculate mean for 'ls_total' by 'condition'
-ls_mean <- data %>%
-  filter(!is.na(ls_total)) %>%  
-  group_by(condition) %>%       
-  summarize(Mean = mean(ls_total))
+ls_mean<-data%>%group_by(condition)%>%summarize(Mean=mean(ls_total)) 
 print(ls_mean)
 
 # Calculate mean for 'ls_total' by 'condition' and subtract the mean of measurement only control
 cond.means_2 <- data %>%
   group_by(condition) %>%
   summarize(Mean = mean(ls_total)) %>%
-  mutate(Mean = Mean - 4.033094	)
+  mutate(Mean = Mean - 4.04)
 
 # Calculate standard error for 'ls_total' by 'condition'
 std_errors <- data %>%
@@ -294,11 +281,8 @@ ls_plot <- ggplot(dosage_data, aes(x = gratitude_mean, y = ls_mean, color = cond
        y = "Mean Self-Reported Life Satisfaction") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
-    axis.title = element_text(size = 8, face = "bold"),
-    axis.text = element_text(size = 6, face = "bold"),
-    legend.title = element_text(size = 8, face = "bold"),
-    legend.text = element_text(size = 6, face = "bold"),
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_text(face = "bold"),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()
   ) +
@@ -312,9 +296,24 @@ print(ls_plot)
 
 ```
 
-#Final Graphs
-```{r final graphs}
-print(happy_plot)
-print(sad_plot)
-print(ls_plot)
+#Combined Graphs
+```{r combined graph}
+# Set theme settings
+theme_settings <- list(
+  plot.title = theme(text = element_text(size = 8, face = "bold")),
+  axis.title = theme(text = element_text(size = 6)) 
+)
+
+# Combine the plots
+combined_plots <- (
+  (happy_plot + theme_settings + theme(legend.position = "none")) +
+  (sad_plot + theme_settings + theme(legend.position = "none")) +
+  (ls_plot + theme_settings + theme(legend.position = "right"))
+) + plot_layout(guides = "collect")
+
+# Set the size of the plot
+options(repr.plot.width = 15, repr.plot.height = 13)
+
+# Print the combined plot
+print(combined_plots)
 ```
