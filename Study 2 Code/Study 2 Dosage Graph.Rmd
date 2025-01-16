@@ -9,12 +9,17 @@ date: "2024-04-10"
 
 ```{r setup, include=FALSE}
 
+install.packages("tidyverse")
 library(tidyverse)
+install.packages("patchwork")
 library(patchwork)
+install.packages("scales")
 library(scales)
+install.packages("here")
 library(here)
 
 ```
+
 ```{r setup}
 # specify directory
 i_am("Study 2 Code/Study 2 Dosage Graph.Rmd")
@@ -26,10 +31,9 @@ data_2 <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.
 # process data
 data_2 <- data_2 %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA") %>%
+  filter(Finished != "0", condition !="NA", condition != "0") %>%
   select("StartDate":"pageNo")
 ```
-
 
 ```{r measures}
 
@@ -70,7 +74,7 @@ condition_name <- c(
     "5" = "Gratitude List",
     "6" = "Gratitude Letter",
     "7" = "Gratitude Text",
-    "8" = "Chan Gratitude List",
+    "8" = "Naikan Gratitude List",
     "9" = "Mental Subtraction Task",
     "10" = "Gratitude to God List",
     "11" = "Gratitude to God Letter")
@@ -141,15 +145,18 @@ happy_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = happy_mean, co
        y = "Mean Self-Reported PA") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5),  
-    legend.title = element_text(face = "bold"),
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+    axis.title = element_text(size = 8, face = "bold"),
+    axis.text = element_text(size = 6, face = "bold"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 6, face = "bold"),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()
   ) +
   # Add R-squared value
-  geom_text(aes(x = max(gratitude_mean), y = min(happy_mean), 
+  geom_text(aes(x = min(gratitude_mean), y = max(happy_mean), 
                 label = paste("R² =", r_squared_happy_2)),
-            hjust = 1, vjust = 0, color = "black", size = 3)
+            hjust = 0, vjust = 1, color = "black", size = 3)
 
 # Print the plot
 print(happy_plot_2)
@@ -200,8 +207,11 @@ sad_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = sad_mean, color 
        y = "Mean Self-Reported NA") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5),
-    legend.title = element_text(face = "bold"),
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+    axis.title = element_text(size = 8, face = "bold"),
+    axis.text = element_text(size = 6, face = "bold"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 6, face = "bold"),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()
   ) +
@@ -262,8 +272,11 @@ ls_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = ls_mean, color = 
        y = "Mean Self-Reported Life Satisfaction") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5),
-    legend.title = element_text(face = "bold"),
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),
+    axis.title = element_text(size = 8, face = "bold"),
+    axis.text = element_text(size = 6, face = "bold"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 6, face = "bold"),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank()
   ) +
@@ -275,26 +288,10 @@ ls_plot_2 <- ggplot(dosage_data_2, aes(x = gratitude_mean, y = ls_mean, color = 
 print(ls_plot_2)
 ```
 
-#Combined Graphs
-```{r combined graph}
-# Set theme settings for larger plots and smaller titles
-theme_settings <- list(
-  plot.title = theme(text = element_text(size = 8, face = "bold")),  # Adjust title size
-  axis.title = theme(text = element_text(size = 6))    # Adjust axis title size
-)
-
-# Combine the plots with adjusted theme settings
-combined_plot <- (
-  (happy_plot_2 + theme_settings + theme(legend.position = "none")) +
-  (sad_plot_2 + theme_settings + theme(legend.position = "none")) +
-  (ls_plot_2 + theme_settings + theme(legend.position = "right"))
-) + plot_layout(guides = "collect")  # Collect legends into one
-
-# Set the size of the plot
-options(repr.plot.width = 15, repr.plot.height = 13)  # Adjust width and height as needed
-
-# Print the combined plot
-print(combined_plot)
-
+#Final Graphs
+```{r final graphs}
+print(happy_plot_2)
+print(sad_plot_2)
+print(ls_plot_2)
 ```
 
