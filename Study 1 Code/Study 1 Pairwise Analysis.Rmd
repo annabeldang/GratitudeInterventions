@@ -27,8 +27,12 @@ i_am("Study 1 Code/Study 1 Pairwise Analysis.Rmd")
 #Set up
 
 study_1.1 <- read.csv(file = here("Study 1 Data", "Gratitude_Interventions_Study_1.1.csv"))
+study_1.1 <- study_1.1 %>%
+  rename(race_2 = race, race = race_2)
 
 study_1.2 <- read.csv(file = here("Study 1 Data", "Gratitude_Interventions_Study_1.2.csv"))
+study_1.2 <- study_1.2 %>%
+  rename(race_2 = race, race = race_2)
 
 study_1.3 <- read.csv(file = here("Study 1 Data", "Gratitude_Interventions_Study_1.3.csv"))
 study_1.3$race_2 <- as.numeric(study_1.3$race_2)
@@ -208,6 +212,51 @@ study_1.4 %>%
 
 mean(study_1.4$age)
 sd(study_1.4$age)
+
+#Ethnicity
+data <- data %>%
+  mutate(race_2 = case_when(
+    race_2 == 1 ~ "American Indian/Alaskan Native",
+    race_2 == 2 ~ "Asian",
+    race_2 == 3 ~ "Native Hawaiian or Other Pacific Islander",
+    race_2 == 4 ~ "Black or African American",
+    race_2 == 5 ~ "White",
+    race_2 == 6 ~ "More than one race",
+    race_2 == 7 ~ "Other",
+    race_2 == 8 ~ "Prefer not to answer",
+    TRUE ~ as.character(race_2)
+  ))
+
+data %>%
+  group_by(race_2) %>%
+  summarise(race_2_count = n()) 
+ 
+data %>%
+  group_by(race) %>%
+  summarise(race_count = n()) 
+
+#Religion
+data <- data %>%
+  mutate(religion = case_when(
+    religion == 1 ~ "Christian",
+    religion == 2 ~ "Catholic",
+    religion == 3 ~ "Mormon",
+    religion == 4 ~ "Jewish",
+    religion == 5 ~ "Muslim",
+    religion == 6 ~ "Buddhist",
+    religion == 7 ~ "Hindu",
+    religion == 8 ~ "Atheist",
+    religion == 9 ~ "Agnostic",
+    religion == 10 ~ "Spiritual",
+    religion == 11 ~ "Other",
+    religion == 12 ~ "Prefer not to say",
+    TRUE ~ as.character(religion)
+  ))
+
+data %>%
+  group_by(religion) %>%
+  summarise(religion_count = n()) 
+
 ```
 
 ```{r categories}
