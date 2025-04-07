@@ -53,7 +53,7 @@ data <- bind_rows(data_temp2, study_1.4)
 
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA") %>%
+  filter(Finished != "0", condition !="NA", consent == "1") %>%
   select("StartDate":"nervous")
 
 ```
@@ -256,6 +256,15 @@ data <- data %>%
 data %>%
   group_by(religion) %>%
   summarise(religion_count = n()) 
+
+```
+```{r}
+#Study Length
+
+mean(data$Duration..in.seconds.)/60
+median(data$Duration..in.seconds.)/60
+range(data$Duration..in.seconds.)/60
+sd(data$Duration..in.seconds.)/60
 
 ```
 

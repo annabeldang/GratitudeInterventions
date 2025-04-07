@@ -32,7 +32,7 @@ data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.cs
 # process data
 data <- data %>%
   # remove incomplete or test observations
-  filter(Finished != "0", condition !="NA") %>%
+  filter(Finished != "0", condition !="NA", consent == "1") %>%
   select("StartDate":"pageNo")
 ```
 
@@ -213,6 +213,14 @@ data <- data %>%
 data %>%
   group_by(religion) %>%
   summarise(religion_count = n()) 
+
+```
+```{r}
+#Study Length
+mean(data$Duration..in.seconds.)/60
+median(data$Duration..in.seconds.)/60
+range(data$Duration..in.seconds.)/60
+sd(data$Duration..in.seconds.)/60
 
 ```
 
