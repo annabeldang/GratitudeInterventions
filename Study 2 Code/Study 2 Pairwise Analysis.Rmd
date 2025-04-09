@@ -215,12 +215,26 @@ data %>%
   summarise(religion_count = n()) 
 
 ```
-```{r}
+```{r study statistics}
+
 #Study Length
 mean(data$Duration..in.seconds.)/60
 median(data$Duration..in.seconds.)/60
 range(data$Duration..in.seconds.)/60
 sd(data$Duration..in.seconds.)/60
+
+#Task length (Using TaskMaster)
+data_TM <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2_TM.csv"))
+
+# process data
+data_TM <- data_TM %>%
+  # remove incomplete or test observations
+  filter(Finished != "0", condition !="NA", consent == "1", condition_type != "1")
+
+mean(data_TM$Page_3_TimeOnPage, na.rm = TRUE) / 60
+median(data_TM$Page_3_TimeOnPage, na.rm = TRUE)/60
+range(data_TM$Page_3_TimeOnPage, na.rm = TRUE)/60
+sd(data_TM$Page_3_TimeOnPage, na.rm = TRUE)/60
 
 ```
 
