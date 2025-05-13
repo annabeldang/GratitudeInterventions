@@ -23,7 +23,7 @@ i_am("Study 2 Code/Study 2 Pairwise Analysis.Rmd")
 
 #Set up
 
-data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study.csv"))
+data <- read.csv(file = here("Study 2 Data", "Gratitude_Interventions_Study_2.csv"))
 
 # process data
 data <- data %>%
@@ -42,8 +42,8 @@ data$sad_all <- rowMeans(data[, c("sad", "depressed", "anxious", "nervous")], na
 data$indebted_all <- rowMeans(data[, c("indebted", "obligated")], na.rm = TRUE)
 data$envy_all <- rowMeans(data[, c("envious", "bitter", "jealous")], na.rm = TRUE)
 
-data$ls_total <- rowMeans(data[, c("ls_1", "ls", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
-data$sc_total <- rowMeans(data[, c("sc_1", "sc", "sc_3")], na.rm = TRUE)
+data$ls_total <- rowMeans(data[, c("ls_1", "ls_2", "ls_3", "ls_4", "ls_5")], na.rm = TRUE)
+data$sc_total <- rowMeans(data[, c("sc_1", "sc_2", "sc_3")], na.rm = TRUE)
 data$self_image_total <- rowMeans(data[, c("circle_task", "self_image", "signature")], na.rm = TRUE)
 
 ```
